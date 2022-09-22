@@ -5,6 +5,7 @@ import UploadForm from './UploadForm.vue'
 import Banner from './Banner.vue'
 import HeadScripts from './HeadScripts.vue'
 
+
 //like window.onload but for vue
 onMounted(()=> {
 var draggable = document.querySelector("#toDrag") as HTMLElement;
