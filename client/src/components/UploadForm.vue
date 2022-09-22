@@ -8,7 +8,9 @@ onMounted(() =>
     var width = 300
     var collapsibleArr = document.querySelectorAll('.collapsible')
     collapsibleArr.forEach((col) => makeCollapsibleSideways(col as HTMLElement, width))
+    
 })
+
 </script>
 
 <template>
@@ -85,7 +87,7 @@ onMounted(() =>
     {
         background-color: rgb(53, 200, 200) /* adjust as needed */
     }
-    
+
     /* Collapse content CSS */
     .collapsible-content
     {
