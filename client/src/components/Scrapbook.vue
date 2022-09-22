@@ -1,65 +1,73 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-type Position = {x:number,y:number}
-const initPosition = 
-{
-    x:-1,
-    y:-1
-}
-const newPosition = 
-{
-    x:-1,
-    y:-1
-}
+import { makeDraggable } from 'simplydrag-js'
+import UploadForm from './UploadForm.vue'
+import Banner from './Banner.vue'
+import HeadScripts from './HeadScripts.vue'
 
+//like window.onload but for vue
 onMounted(()=> {
 var draggable = document.querySelector("#toDrag") as HTMLElement;
-
 makeDraggable(draggable)
 
 })
-function makeDraggable(draggable:HTMLElement)
-{
-    console.log('*** make draggable called ***')
-    //prep element for draggging
-    draggable.style.cursor = "move"
-    draggable.style.position = "absolute"
-    draggable.setAttribute('draggable','true')
-    draggable.innerHTML = " "
-    // draggable.addEventListener('dragstart', (e) => 
-    // {
-    //     console.log('*** drag start called ***')
-    //     var dragImage = document.createElement('img')
-    //     dragImage.style.height = '1px'
-    //     dragImage.style.width = '1px'
-    //     dragImage.style.opacity = '0'
-    //     //prevent default behaviour
-    //     e.preventDefault();
-    //     e.dataTransfer?.setDragImage(dragImage,0,0)
-    // })
-    draggable.ondrag = (e) => drag(e,draggable)
-}
-function drag(e:DragEvent, draggable:HTMLElement)
-{
-    console.log('*** drag end called ***')
-    console.log(`*** x:${e.clientX}px, y:${e.clientY}px `)
-    //get initial coordinates of the element
-    draggable.style.left = e.clientX + 'px'
-    //set new permanent y
-    draggable.style.top = e.clientY + 'px'
-}
+
+
 </script>
 
 <template>
-<div>
-    <span id="toDrag" class="to-drag">
-    </span>
+<HeadScripts></HeadScripts>
+<Banner></Banner>
+<div class="grid-container">
+    <div class="column-1">
+        <Suspense>
+            <UploadForm></UploadForm>
+        </Suspense>
+    </div>
+    <div class="column-2 scrapbook">
+        <div class="scrapbook-bg">
+            <span id="toDrag" class="to-drag"></span>
+        </div>
+    </div>
 </div>
 </template>
 
 <style>
+    @import url(../assets/base.css);
+    .grid-container
+    {
+        display: grid;
+        grid-template-columns: [form] 3fr [scrapbook] 7fr;
+        grid-template-rows: 1fr;
+        height: 100vh;
+    }
+    .column-1
+    {
+        grid-column: form;
+    }
+    .column-2
+    {
+        grid-column: scrapbook;
+        display:grid;
+    }
+    .scrapbook
+    {
+        /* width: 500px; */
+        border-style:dotted;
+        background-color: var(--cool-grey);
+    }
+    .scrapbook-bg
+    {
+        border-radius: 50px;
+        height: 90%;
+        width: 90%;
+        margin: auto;
+        background-color:var(--light-grey);
+        z-index: 0;
+    }
     .to-drag
     {
+        position: absolute;
         padding: 100px;
         background-color: green;
         width:100px;
