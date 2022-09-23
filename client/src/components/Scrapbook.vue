@@ -5,38 +5,118 @@ import UploadForm from './UploadForm.vue'
 import Banner from './Banner.vue'
 import HeadScripts from './HeadScripts.vue'
 
+
+
+
+// function makeClickable(rotatable:HTMLElement)
+// {
+//     rotatable.onmousedown = (e) => 
+//     {
+//         e.preventDefault();
+//         var startAngle = getMouseAngle(e,rotatable);
+//         rotatable.onmousemove = (e) => 
+//         {
+//             e.preventDefault()
+//             var endAngle = getMouseAngle(e,rotatable)
+//             var angleOfRotation = (endAngle - startAngle) * -1
+//             console.log('angleOfRotation:'+ angleOfRotation)
+//             rotate(e,rotatable, angleOfRotation)
+//         }
+//     }
+
+// }
+// function rotate(e:MouseEvent,rotatable:HTMLElement, angle:number)
+// {
+//     rotatable.style.rotate = angle+'deg'
+// }
+
+// function getMouseAngle(e:MouseEvent, rotatable:HTMLElement)
+// {
+//     var r2D = 180/Math.PI
+//     //get element mid points
+//     var {midX, midY} = getMidPoints(rotatable)
+//     //get mouse click mid points
+//     var mouseClickX = e.clientX
+//     var mouseClickY = e.clientY
+//     //subtract the two to get the length = 
+//     var x = mouseClickX + midX
+//     var y = mouseClickY + midY
+//     //
+//     var angle = r2D * Math.atan2(x,y)
+//     return angle
+// }
+
+
 //like window.onload but for vue
 onMounted(()=> {
 // var draggable = document.querySelector("#toDrag") as HTMLElement;
 // makeDraggable(draggable)
-
-
+//study -> https://jsfiddle.net/o5jjosvu/65/ - rotate with jQuery
 var rotatibleArr = document.querySelectorAll('.rotatible')
     rotatibleArr.forEach((r) => makeRotatable(r as HTMLElement))
 
 })
 type Position = {x:number,y:number}
 var clickPosition = {x:-1, y:-1}
-var elementPosition = {x:-1, y:-1}
+var elementPosition = {x:-1, y:-1}//top-left corner
+var elementCenter = {x:-1, y:-1}//center of element
 var mouseDragPosition = {x:-1, y:-1}
+function getMidPoints(rotatable:HTMLElement)
+{
+     // //get position of element within containing element
+     var rect = rotatable.getBoundingClientRect()
+    elementPosition.x = rect.x
+    elementPosition.y = rect.y
+
+    //radius
+    var radius = rect.width/2
+
+    //midX and mixY
+    var midX = rect.x+rect.width/2
+    var midY = rect.y+rect.height/2
+    return {midX,midY,radius}
+}
 function makeRotatable(rotatable:HTMLElement)
 {
 
+ 
     //on mouse down call rotate function
     rotatable.onmousedown = (e) => {
         //get mouse click position within the element
-        clickPosition.x = e.clientX
-        clickPosition.y = e.clientY
-        // //get position of element within containing element
-        var rect = rotatable.getBoundingClientRect()
-        elementPosition.x = rect.x
-        elementPosition.y = rect.y
+        var {midX, midY} = getMidPoints(rotatable)
 
-        // var midX = rect.left + rect.right
-        // var midY = rect.top + rect.bottom
-        rotatable.onmousemove = (e) => rotateByMouseDrag(e,rotatable)
+        //get degress of click position
+        //radian
+        var radians = Math.atan2(midX - clickPosition.x, midY - clickPosition.y)
+        //degrees
+        var degreesOfInitialClick = Math.round((radians *(180/Math.PI)))
+        
+        
+        
+
+        //https://jsfiddle.net/o5jjosvu/65/
+        //https://codepen.io/hienlm/pen/BaojoBj
+        rotatable.onmousemove = (e) => rotateByDegree(e,rotatable,degreesOfInitialClick)
     }
     rotatable.onmouseup = (e) => endRotate(e,rotatable)
+}
+/**
+ * 
+ * @param e 
+ * @param rotatable HTML element to rotate
+ * @param angle angle in degrees
+ */
+function rotateByDegree(e:MouseEvent, rotatable:HTMLElement, initialClickAngle:number)
+{
+    var {midX, midY} = getMidPoints(rotatable)
+    //get degress of click position
+    //radian
+    var radians = Math.atan2(midX - e.clientX , midY - e.clientY)
+    //degrees
+    var degreesOfMouseMove = Math.round((radians *(180/Math.PI))) *-1
+    var angle = degreesOfMouseMove - initialClickAngle
+    console.log(`angle:${angle}`)
+    rotatable.style.rotate = angle+'deg'
 }
 function rotateByMouseDrag(e:MouseEvent, element:HTMLElement)
 {
@@ -54,12 +134,12 @@ function rotateByMouseDrag(e:MouseEvent, element:HTMLElement)
     if(!positiveX && positiveY)
     {
         var oppposite = y
-        var adjacent = x * -1
+        var adjacent = x
         angle = Math.atan(oppposite/adjacent)
         
     }
     // if +x and +y
-    if(positiveX && positiveY)
+    else if(positiveX && positiveY)
     {
         //rotate by x position along q2 - 90 to 180 degrees
         var oppposite = x
@@ -67,18 +147,18 @@ function rotateByMouseDrag(e:MouseEvent, element:HTMLElement)
         angle = Math.atan(oppposite/adjacent)+90
     }
     //if +x and -y
-    if (positiveX && !positiveY)
+    else if (positiveX && !positiveY)
     {
         var oppposite = x
-        var adjacent = y * -1
+        var adjacent = y
         angle = Math.atan(oppposite/adjacent)+180
     }
 
     //if -x and -y
-    if (!positiveX && !positiveY)
+    else if (!positiveX && !positiveY)
     {
-        var oppposite = x * -1
-        var adjacent = y * -1
+        var oppposite = x
+        var adjacent = y
         angle = Math.atan(oppposite/adjacent)+270
     }
     console.log(`angle:${angle}`)
@@ -149,5 +229,6 @@ function endRotate(e:MouseEvent,rotatable:HTMLElement)
         background-color: green;
         width:100px;
         height:40px;
+        margin:100px;
     }
 </style>
