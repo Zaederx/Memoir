@@ -11,6 +11,8 @@ onMounted(() =>
     
 })
 
+
+
 </script>
 
 <template>
@@ -51,15 +53,16 @@ onMounted(() =>
     }
     .title
     {
+        display:inline-block;
         font-family: 'Roboto', sans-serif;
         font-size: 30px;
         padding:10px;
-        margin-top: 10px;
         writing-mode: vertical-rl;
         text-orientation: upright;
         position: fixed;
         margin-top: 30px;
         margin-left: 45px;
+        left:130px;
         z-index: 2;
         pointer-events:none
     }
