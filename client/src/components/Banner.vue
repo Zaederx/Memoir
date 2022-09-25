@@ -2,7 +2,7 @@
 </script>
 
 <template>
-<nav id="navbar" class="navbar navbar-expand-lg navbar-dark" style="background-color:rgb(185,124,0)">
+<nav id="navbar" class="navbar navbar-expand-lg navbar-dark" style="background-color:var(--orange)">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">Memior</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,5 +38,6 @@
 </template>
 
 <style scoped>
+  @import url(../assets/base.css);
 
 </style>

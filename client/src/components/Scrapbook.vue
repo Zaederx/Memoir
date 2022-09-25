@@ -7,46 +7,6 @@ import { makeDraggable } from 'simplydrag-js'
 import { makeRotatable } from 'simplyrotate-js'
 
 
-
-// function makeRotatible2(rotatable:HTMLElement)
-// {
-//     rotatable.onmousedown = (e) => 
-//     {
-//         e.preventDefault();
-//         var startAngle = getMouseAngle(e,rotatable);
-//         rotatable.onmousemove = (e) => 
-//         {
-//             e.preventDefault()
-//             var endAngle = getMouseAngle(e,rotatable)
-//             var angleOfRotation = (endAngle - startAngle) * -1
-//             console.log('angleOfRotation:'+ angleOfRotation)
-//             rotate(e,rotatable, angleOfRotation)
-//         }
-//     }
-
-// }
-// function rotate(e:MouseEvent,rotatable:HTMLElement, angle:number)
-// {
-//     rotatable.style.rotate = angle+'deg'
-// }
-
-// function getMouseAngle(e:MouseEvent, rotatable:HTMLElement)
-// {
-//     var r2D = 180/Math.PI
-//     //get element mid points
-//     var {midX, midY} = getMidPoints(rotatable)
-//     //get mouse click mid points
-//     var mouseClickX = e.clientX
-//     var mouseClickY = e.clientY
-//     //subtract the two to get the length = 
-//     var x = mouseClickX + midX
-//     var y = mouseClickY + midY
-//     //
-//     var angle = r2D * Math.atan2(x,y)
-//     return angle
-// }
-
-
 //like window.onload but for vue
 onMounted(()=> {
 
@@ -68,6 +28,9 @@ onMounted(()=> {
             rotatibleArr.forEach((r) => makeRotatable(r as HTMLElement))
         }
     }
+
+    //make menut button clickable
+
 })
 
 
@@ -139,4 +102,5 @@ onMounted(()=> {
         height:40px;
         /* don'd add margin to this or it won't work */
     }
+
 </style>

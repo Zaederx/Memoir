@@ -17,16 +17,17 @@ onMounted(() =>
 
 <template>
     <div class="btn-upload-form">
-        <div class="title">
-            SCRAPBOOK
-        </div>
+        
         <div id="collapsible" class="collapsible section1">
+            <div class="title">
+                SCRAPBOOK
+            </div>
             <div class="collapsible-content">
                 <div class="content-background">
-                    <div>Menu</div>
-                    <div class="btn-custom">Add Pictures</div>
-                    <div class="btn-custom">Remove Picture</div>
-                    <div class="btn-custom">Print Scrapbook</div>
+                    <div class="cc-title">Menu</div>
+                    <div id="btn-add-pictures" class="btn-custom">Add Pictures</div>
+                    <div id="btn-remove-pictures" class="btn-custom">Remove Picture</div>
+                    <div id="btn-print" class="btn-custom">Print Scrapbook</div>
                 </div>
             </div>
         </div>
@@ -43,6 +44,7 @@ onMounted(() =>
     </div>
 </template>
 <style scoped>
+    @import url('../assets/base.css');
     @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
     .btn-upload-form
@@ -50,6 +52,7 @@ onMounted(() =>
         margin-top:20vh;
         margin-left: 30%;
         z-index: 3;
+        position: relative;
     }
     .title
     {
@@ -59,10 +62,10 @@ onMounted(() =>
         padding:10px;
         writing-mode: vertical-rl;
         text-orientation: upright;
-        position: fixed;
+        position: relative;
         margin-top: 30px;
-        margin-left: 45px;
-        left:130px;
+        margin-left: 20px;
+        /* left:130px; */
         z-index: 2;
         pointer-events:none
     }
@@ -70,7 +73,6 @@ onMounted(() =>
     /* Collapse CSS */
     .collapsible
     {
-
         /* border radius for  */
         border-top-left-radius: 50px;
         border-top-right-radius: 50px;
@@ -79,8 +81,9 @@ onMounted(() =>
 
         margin-left: 30px;
         cursor: pointer;
-        position: fixed;
-        background-color: rgb(36, 123, 121);/* adjust as needed */
+        position: relative;
+        margin-bottom:400px;
+        background-color: var(--teal);/* adjust as needed */
         height: 400px;/* adjust as needed */
         width: 100px;/* adjust as needed */
         z-index: 1;
@@ -88,7 +91,7 @@ onMounted(() =>
 
     .collapsible:hover
     {
-        background-color: rgb(53, 200, 200) /* adjust as needed */
+        background-color: var(--mint) /* adjust as needed */
     }
 
     /* Collapse content CSS */
@@ -99,10 +102,10 @@ onMounted(() =>
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 5%;
 
-        position:fixed;
-        background-color: rgb(36, 123, 121);
+        position:relative;
+        background-color: var(--teal);
         overflow:hidden;
-        margin-top: 50px;
+        margin-top: -270px;
         margin-left: 95px;
         max-width: 0px;
         height: 300px;
@@ -113,6 +116,7 @@ onMounted(() =>
         transition: max-width 2s ease-out;
         z-index: 3;
     }
+    
     .content-background
     {
         background-color:white;
@@ -133,5 +137,22 @@ onMounted(() =>
     .input-file
     {
 
+    }
+
+    .cc-title
+    {
+        margin-left:auto;
+        margin-right:auto;
+        width: 25%;
+    }
+    .btn-custom
+    {
+        background-color: var(--light-grey);
+        border-radius: 5px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
     }
 </style>
