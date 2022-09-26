@@ -16,6 +16,11 @@ const routes = [
     path: '/scrapbook',
     name: 'scrapbook',
     component: vues.Scrapbook
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: vues.Login
   }
  
 ]

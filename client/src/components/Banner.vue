@@ -1,4 +1,7 @@
 <script setup lang="ts">
+  const props = defineProps({
+    heading2:String
+  })
 </script>
 
 <template>
@@ -11,23 +14,28 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+          <a class="nav-link active" aria-current="page" href="/">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Login</a>
+          <a class="nav-link" href="/login">Login</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Menu
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">View Scrapbook</a></li>
-            <li><a class="dropdown-item" href="#">About</a></li>
-            <li><hr class="dropdown-divider">Logout</li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li><a class="dropdown-item" href="/scrapbook">View Scrapbook</a></li>
+            <li><a class="dropdown-item" href="/about">About</a></li>
+            <li><hr class="dropdown-divider" href="/logout">Logout</li>
           </ul>
         </li>
       </ul>
+      <div class="nav-center">
+        <a>{{heading2}}</a>
+      </div>
+      <div class="nav-right">
+
+      </div>
       <form class="d-flex">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>

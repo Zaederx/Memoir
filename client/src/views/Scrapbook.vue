@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import UploadForm from './UploadForm.vue'
-import Banner from './Banner.vue'
-import HeadScripts from './HeadScripts.vue'
 import { makeDraggable } from 'simplydrag-js'
 import { makeRotatable } from 'simplyrotate-js'
+
 
 
 //like window.onload but for vue
@@ -38,7 +36,7 @@ onMounted(()=> {
 
 <template>
 <HeadScripts></HeadScripts>
-<Banner></Banner>
+<Banner heading2="Scrapbook"></Banner>
 <div class="grid-container">
     <div class="column-1">
         <Suspense>
@@ -54,16 +52,27 @@ onMounted(()=> {
             <span id="toDrag" class="to-drag rotatible"></span>
         </div>
     </div>
+    <SiteFooter></SiteFooter>
 </div>
+
 </template>
 
 <style>
     @import url(../assets/base.css);
+    body 
+    {
+        background-image: url(../assets/photos-g9761b2a74_1920.jpg);
+        background-repeat: no-repeat;
+        /* fixed - creates cool effect while scrolling */
+        background-attachment: fixed;
+        background-size: 100% 100%;
+        
+    }
     .grid-container
     {
         display: grid;
         grid-template-columns: [form] 3fr [scrapbook] 7fr;
-        grid-template-rows: 1fr;
+        grid-template-rows: [main]10fr [footer]2fr;
         height: 100vh;
     }
     .column-1
@@ -95,6 +104,8 @@ onMounted(()=> {
     }
     .to-drag
     {
+        background-image: url(../assets/photos-g9761b2a74_1920.jpg);
+        background-size: 100% 100%;
         position: absolute;
         padding: 100px;
         background-color: green;

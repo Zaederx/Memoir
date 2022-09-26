@@ -4,6 +4,7 @@
   --mint: rgb(53, 200, 200);
   --orange: rgb(185,124,0);
   --cool-grey: rgb(93,92,92);
+  --cool-grey-transparent: rgba(197, 197, 197, 0.50);
   --light-grey: rgb(235,235,235);
 }
 
@@ -19,4 +20,16 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.nav-center
+{
+  display: grid;
+  justify-content:center;
+  color: white
+}
+
+.nav-right
+{
+  margin-left: auto;
 }
