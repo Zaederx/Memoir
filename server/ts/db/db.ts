@@ -10,6 +10,7 @@ const uri = `mongodb+srv://memoir-cluster:${password}@memoir-cluster.g4ldqzg.mon
 
 
 //Query MongoDB - https://www.mongodb.com/docs/drivers/node/current/quick-start/
+//https://www.mongodb.com/docs/drivers/node/current/usage-examples/deleteOne/
 const client = new MongoClient(uri);
 const dbClusterName = 'memoir' //db name
 //fetch databse
@@ -42,11 +43,7 @@ async function findUserByUsername(username:string)
     //get user by username
     var query = {username:username}
     const user = await users.findOne(query)
-    if (user) 
-    {
-      console.log(user)
-    }
-    else
+    if (!user) 
     {
       throw new Error('User not found')
     }
@@ -69,11 +66,7 @@ async function findUserBySessionId(sessionId: string)
     const query = {sessionId: sessionId}
     const user  = await users.findOne(query)
 
-    if (user) 
-    {
-      console.log(user)
-    }
-    else
+    if (!user) 
     {
       throw new Error('User not found')
     }
@@ -93,8 +86,15 @@ async function addData(collection:string, data:Object)
   //insert new data
   try 
   {
-    const result = col.insertOne(data)
-    console.log(result)
+    const result = await col.insertOne(data)
+    if(result && result.acknowledged) 
+    {
+      console.log(`added ${collection} succesfully`)
+    }
+    else
+    {
+      throw new Error(`Problem adding ${collection} to database` )
+    }
   }
   catch (e)
   {
@@ -104,10 +104,37 @@ async function addData(collection:string, data:Object)
 }
 
 
-async function deleteUser()
+/**
+ * Deletes a user that matched the specified conditions in the query.
+ * Usage example:
+ * ```
+ * const query = {username: 'username1'}
+ * await deleteUser(query) 
+ * ```
+ * @param query the conditions of finding a specificed user
+ */
+async function deleteUser(query:any)
 {
-  throw new Error('NOT YET IMPLEMENTED')
+  const collection = 'user'
+  const col = database.collection(collection)
+
+  try
+  {
+    const result = await col.deleteOne(query)
+    if(result.deletedCount === 1)
+    {
+      console.log(`successfully deleted 1 user`)
+    }
+    else 
+    {
+      throw new Error('No users matched the query')
+    }
+  }
+  catch (e)
+  {
+    console.log(e)
+  }
 }
 
 export default client
-export { database, addUser, findUserByUsername, findUserBySessionId, addData }
+export { database, addUser, deleteUser, findUserByUsername, findUserBySessionId, addData }
