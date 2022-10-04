@@ -3,6 +3,8 @@
 
 #node modules
 */node_modules/
+#js files
+*/js/
 
 
 # Compiled class file
