@@ -1,6 +1,18 @@
 import assert from 'assert';
-import * as db from '../js/db/db.js'
+import path from 'path'
+import { config as dotEnvConfig } from 'dotenv'
+import { after } from 'mocha';
+import crudDriver from '../js/db/db.js'
 
+//get access enviroment variables in env file
+const envFilePath = path.join('..', 'demo.env')//only accepts relative path
+dotEnvConfig({path: envFilePath})
+
+//get mongodb paassword and uri
+const password = process.env.DATABASE_PASSWORD
+const uri = `mongodb+srv://memoir-cluster:${password}@memoir-cluster.g4ldqzg.mongodb.net/?retryWrites=true&w=majority`;
+//create a new 
+var db = new crudDriver(uri,'memoir')
 describe('Testing db functions', () => {
     //CREATE
     describe('\n\n\nCREATE - addUser(name,username,password,email,sessionId)', ()=> {
@@ -108,4 +120,12 @@ describe('Testing db functions', () => {
 
         })
     })
+    
+})
+
+after('after - delete test user', async ()=> {
+    //delete test user
+    var username = 'test-username'
+    const query = {username: username}
+    await db.deleteUser(query)
 })
