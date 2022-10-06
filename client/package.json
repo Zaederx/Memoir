@@ -16,6 +16,7 @@
   "dependencies": {
     "boostrap": "^2.0.0",
     "bootstrap-vue-3": "^0.3.3",
+    "jquery": "^3.6.1",
     "pinia": "^2.0.21",
     "simplycollapsible-js": "^1.0.3",
     "simplydrag-js": "^1.1.4",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
+    "@types/jquery": "^3.5.14",
     "@types/jsdom": "^20.0.0",
     "@types/node": "^16.11.56",
     "@vitejs/plugin-vue": "^3.0.3",
