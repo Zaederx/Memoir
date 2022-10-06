@@ -32,6 +32,7 @@ try {
  */
 export function setHeadTags()
 {
+    console.log('setHeadTags() called')
     //view router
     const viewRouter = document.createElement('script') as HTMLScriptElement
     viewRouter.type = 'text/javascript'
