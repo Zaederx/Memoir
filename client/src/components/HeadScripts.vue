@@ -3,7 +3,7 @@
 import { onMounted } from 'vue'
 import { setHeadTags } from '../helpers/headscript/headscript-helper.js'
     
-onMounted( async ()=> {
+onMounted( ()=> {
     console.warn('************* HeadScript.vue script **************')
     // set the rest of the head tags with dependencies
     setHeadTags()
