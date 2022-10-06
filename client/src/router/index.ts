@@ -1,21 +1,29 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import * as vues from '../vue-imports'
-
+import AjaxAuth from '@/components/AjaxAuth.vue'
+import App from '@/App.vue'
+import Home from '@/views/Home.vue'
+import Scrapbook from '@/components/Scrapbook.vue'
+import About from '@/views/About.vue'
+import HomeMain from '@/components/HomeMain.vue'
+import SiteFooter from '@/components/SiteFooter.vue'
+import Banner from '@/components/Banner.vue'
+import UploadForm from '@/components/UploadForm.vue'
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: vues.Home
+    name: 'Home',
+    component: Home
   },
   {
     path: '/about',
-    name: 'about',
-    component: vues.About
+    name: 'About',
+    component: About
   },
   {
     path: '/scrapbook',
-    name: 'scrapbook',
-    component: vues.Scrapbook
+    name: 'Scrapbook',
+    component: Scrapbook
   }
  
 ]
