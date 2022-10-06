@@ -6,9 +6,15 @@
 </template>
 
 <style>
+html
+{
+    animation: fadeInAnimation ease 3s;
+	animation-iteration-count: 1;
+	animation-fill-mode: forwards;
+}
 .main {
     height: 1000px;
-    background-image: url(/img/pexels-pixabay-163064.jpg);
+    background-image: url(../assets/photos-g9761b2a74_1920.jpg);
     background-repeat: no-repeat;
     /* fixed - creates cool effect while scrolling */
     background-attachment: fixed;
@@ -24,9 +30,7 @@
     /* left: 0; */
     /* width: 100%; */
     /* min-height: 100%; */
-    animation: fadeInAnimation ease 3s;
-	animation-iteration-count: 1;
-	animation-fill-mode: forwards;
+    
     
 } 
 

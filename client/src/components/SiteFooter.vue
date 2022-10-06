@@ -1,24 +1,25 @@
 <template>
  <div id="footer" class="footer">
-    <div class="section-links"><div class="grid-item">
+    <div class="section-links">
+        <div class="grid-item">
             <p>Home</p>
             <p>About</p>
             <p>Login</p>
         </div>
         <div class="grid-item">
-            <p>SiteMap</p>
-            <p>Funding</p>
+            <p>Site Map</p>
+            <p>Contact Us</p>
+            <p>Comments</p>
+        </div>
+        <div class="grid-item">
+            <p>Research</p>
             <p>Sponsors</p>
+            <p>Funding</p>
         </div>
         <div class="grid-item">
-            <p>Attributions</p>
-            <p>Awards</p>
-            <p>Contributions</p>
-        </div>
-        <div class="grid-item">
+            <p>Example Scrapbooks</p>
+            <p>Tutorials</p>
             <p>Jobs</p>
-            <p>Site Policies</p>
-            <p>Research Projects</p>
         </div>
     </div>
     <div class="social-media">
@@ -35,6 +36,7 @@
 
 <style scoped>
 .footer {
+    grid-column: 1 / span 2;
     height:300px;
     background-color: rgb(43, 44, 54);
     color: white;

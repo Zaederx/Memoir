@@ -1,11 +1,11 @@
 <script setup lang="ts">
 
+
 </script>
 
 <template>
     <HeadScripts></HeadScripts>
-    <!-- <AjaxAuth></AjaxAuth> -->
-    <Banner></Banner>
+    <Banner heading2="Home"></Banner>
     <HomeMain></HomeMain>
     <SiteFooter></SiteFooter>
 </template>

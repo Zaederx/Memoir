@@ -8,5 +8,8 @@ import HomeMain from '@/components/HomeMain.vue'
 import SiteFooter from '@/components/SiteFooter.vue'
 import Banner from '@/components/Banner.vue'
 import UploadForm from '@/components/UploadForm.vue'
+import LoginForm from './components/LoginForm.vue'
+import Login from './views/Login.vue'
 
-export {App, AjaxAuth, HeadScripts,Banner, Home, HomeMain, SiteFooter, Scrapbook, About, UploadForm}
+export {App, AjaxAuth, Home, Scrapbook, About, Banner, HeadScripts,
+     LoginForm, Login, SiteFooter, HomeMain, UploadForm}
