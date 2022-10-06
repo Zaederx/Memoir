@@ -4,7 +4,7 @@
 <template>
 <nav id="navbar" class="navbar navbar-expand-lg navbar-dark" style="background-color:rgb(185,124,0)">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Memior</a>
+    <a class="navbar-brand" href="#">Memoir</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -21,7 +21,7 @@
             Menu
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">View Scrapbook</a></li>
+            <li><a class="dropdown-item" href="/scrapbook">View Scrapbook</a></li>
             <li><a class="dropdown-item" href="#">About</a></li>
             <li><hr class="dropdown-divider">Logout</li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
