@@ -3,9 +3,11 @@
 </script>
 
 <template>
-    <div id="toDrag">
-
-    </div>
+    <HeadScripts></HeadScripts>
+    <!-- <AjaxAuth></AjaxAuth> -->
+    <Banner></Banner>
+    <HomeMain></HomeMain>
+    <SiteFooter></SiteFooter>
 </template>
 
 <style scoped>
