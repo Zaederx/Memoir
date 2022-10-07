@@ -5,10 +5,22 @@ import { makeCollapsibleSideways } from 'simplycollapsible-js'
 
 onMounted(() => 
 {
+    //make the scrapbook menu collapsible
     var width = 300
     var collapsibleArr = document.querySelectorAll('.collapsible')
     collapsibleArr.forEach((col) => makeCollapsibleSideways(col as HTMLElement, width))
     
+    //make menu functional
+    //make add pictures bring up a different Menu
+    var btnAddPictures = document.querySelector('#btn-add-pictures') as HTMLDivElement
+    btnAddPictures.onclick = () => openPicutesMenu()
+
+    function openPictureMenu()
+    {
+        //hide cuurent menu
+        document.querySelector()
+        //show new picture menu
+    }
 })
 
 
@@ -18,11 +30,11 @@ onMounted(() =>
 <template>
     <div class="btn-upload-form">
         
-        <div id="collapsible" class="collapsible section1">
+        <div id="collapsible" class="collapsible">
             <div class="title">
                 SCRAPBOOK
             </div>
-            <div class="collapsible-content">
+            <div class="collapsible-content" id="collapse-1">
                 <div class="content-background">
                     <div class="cc-title">Menu</div>
                     <div id="btn-add-pictures" class="btn-custom">Add Pictures</div>
@@ -30,9 +42,7 @@ onMounted(() =>
                     <div id="btn-print" class="btn-custom">Print Scrapbook</div>
                 </div>
             </div>
-        </div>
-        <div id="collapsible" class="collapsible section2" hidden>
-            <div class="collapsible-content">
+            <div class="collapsible-content" id="collapse-2">
                 <div class="content-background">
                     <form class="form-upload">
                     <input class="input-file" type="file" accept="image/*" multiple>
@@ -41,6 +51,7 @@ onMounted(() =>
                 </div>
             </div>
         </div>
+        
     </div>
 </template>
 <style scoped>
