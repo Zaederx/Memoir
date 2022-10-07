@@ -3,7 +3,6 @@ import { createPinia } from 'pinia'
 import * as vues from './vue-imports'
 import router from './router'
 
-import './assets/main.css'
 const app = createApp(vues.App)
 
 //add components
@@ -16,7 +15,8 @@ app.component('HomeMain', vues.HomeMain)
 app.component('SiteFooter', vues.SiteFooter)
 app.component('UploadForm', vues.UploadForm)
 app.component('HeadScripts', vues.HeadScripts)
-
+app.component('Login', vues.Login)
+app.component('LoginForm', vues.LoginForm)
 app.use(createPinia())
 app.use(router)
 
