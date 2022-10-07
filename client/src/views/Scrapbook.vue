@@ -1,33 +1,8 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { makeDraggable } from 'simplydrag-js'
-import { makeRotatable } from 'simplyrotate-js'
-
-
-
-//like window.onload but for vue
-onMounted(()=> {
-
-    //object draggable by default
-    var draggable = document.querySelector("#toDrag") as HTMLElement;
-    makeDraggable(draggable)
-
-    var dragRotateSwitch = document.querySelector('.switch > input') as HTMLInputElement
-    dragRotateSwitch.onchange = () => 
-    {
-        if (dragRotateSwitch.checked == false)
-        {
-            var draggable = document.querySelector("#toDrag") as HTMLElement;
-            makeDraggable(draggable)
-        }
-        else
-        {
-            var rotatibleArr = document.querySelectorAll('.rotatible')
-            rotatibleArr.forEach((r) => makeRotatable(r as HTMLElement))
-        }
-    }
-
-
+import { makeScrapbookImagesMovable } from '@/helpers/scrapbook/scrapbook.js'
+onMounted(() => {
+    makeScrapbookImagesMovable()
 })
 
 
@@ -47,8 +22,8 @@ onMounted(()=> {
             <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
             <label class="form-check-label" for="flexSwitchCheckDefault">Drag or Rotate</label>
         </div>
-        <div class="scrapbook-bg">
-            <span id="toDrag" class="to-drag rotatible"></span>
+        <div class="scrapbook-bg" id="scrapbook-bg">
+            <span class="draggable to-drag-example rotatible"></span>
         </div>
     </div>
     <SiteFooter></SiteFooter>
@@ -101,15 +76,20 @@ onMounted(()=> {
         background-color:var(--light-grey);
         z-index: 0;
     }
-    .to-drag
+    .draggable
     {
-        background-image: url(../assets/photos-g9761b2a74_1920.jpg);
         background-size: 100% 100%;
         position: absolute;
         padding: 100px;
         background-color: green;
+        background-image: url();
         width:100px;
         height:40px;
+        /* don'd add margin to this or it won't work */
+    }
+    .to-drag-example
+    {
+        background-image: url(../assets/photos-g9761b2a74_1920.jpg);
         /* don'd add margin to this or it won't work */
     }
 
