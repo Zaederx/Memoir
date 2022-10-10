@@ -17,6 +17,7 @@ app.component('UploadForm', vues.UploadForm)
 app.component('HeadScripts', vues.HeadScripts)
 app.component('Login', vues.Login)
 app.component('LoginForm', vues.LoginForm)
+
 app.use(createPinia())
 app.use(router)
 

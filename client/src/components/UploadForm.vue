@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { makeCollapsibleSideways } from 'simplycollapsible-js'
-import { makeScrapbookImagesMovable } from '@/helpers/scrapbook/scrapbook.js'
+import { closePictureMenu, getImages, openPictureMenu, removeImgFromScrapbook } from '@/helpers/uploadForm/upload-form'
 
 onMounted(() => 
 {
@@ -17,70 +17,20 @@ onMounted(() =>
 
     const btnSubmit = document.querySelector('#btn-submit-images') as HTMLDivElement
     btnSubmit.onclick = () => getImages()
+
+    const btnClose = document.querySelector('#btn-close') as HTMLDivElement
+    btnClose.onclick = () => closePictureMenu()
+
+    const btnRemoveImg = document.querySelector('#btn-remove-pictures') as HTMLButtonElement
+    btnRemoveImg.onclick = () => removeImgFromScrapbook()
+
 })
 
 
     
-    function openPictureMenu()
-    {
-        console.log('open picture menu called')
-        //hide cuurent menu
-        const menu1 =  document.querySelector('#menu-1') as HTMLDivElement
-        menu1.style.display = 'none'
-        //show new picture menu
-        const menu2 =  document.querySelector('#menu-2') as HTMLDivElement
-        menu2.style.display = 'block'
-    }
+    
 
-    function closePictureMenu()
-    {
-        //hide cuurent menu
-        const menu1 =  document.querySelector('#collapse-1') as HTMLDivElement
-        menu1.hidden = false
-        //show new picture menu
-        const menu2 =  document.querySelector('#collapse-2') as HTMLDivElement
-        menu2.hidden = true
-    }
-
-    function getImages()
-    {
-        const input = document.querySelector('#file-input') as HTMLInputElement
-
-        if (input.files)
-        {
-            for (let index = 0; index < input.files.length; index++) 
-            {
-
-                var file = input.files[index]
-                addFileToScrapbook(file)
-            }
-        }
-        
-    }
-
-    function addFileToScrapbook(file:File)
-    {
-        //get file img as html element displaying an image
-        var spanImg = fileToScrapbookImg(file);
-        //put image into hmtl div
-        var scrapbook = document.querySelector('#scrapbook-bg') as HTMLDivElement
-        scrapbook.append(spanImg)
-
-        //reapply makeScrapbookImagesMovable function
-        makeScrapbookImagesMovable()
-    }
-    function fileToScrapbookImg(file:File):HTMLElement
-    {
-        //create span
-        var span = document.createElement('img') as HTMLElement;
-        //add image to span
-        var imgSrc = URL.createObjectURL(file)
-        span.style.backgroundImage = `url(${imgSrc})`;
-        //add draggable and rotatible classes
-        span.classList.add('draggable')
-        span.classList.add('rotatible')
-        return span
-    }
+    
 
 </script>
 
@@ -100,7 +50,10 @@ onMounted(() =>
                         <div id="btn-print" class="btn-custom">Print Scrapbook</div>
                     </div>
                     <div id="menu-2" style="display:none">
-                        <div class="cc-title">Upload Form</div>
+                        <div class="cc-title">
+                            Upload Form
+                            <span id="btn-close" class="btn-close">X</span>
+                        </div>
                         <form class="form-upload">
                             <input id="file-input" class="input-file" type="file" accept="image/*" multiple>
                             <!-- <input type="submit"> -->
@@ -120,6 +73,11 @@ onMounted(() =>
     @import url('../assets/base.css');
     @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
+    .btn-close
+    {
+        background-color:red;
+        float:right;
+    }
     .btn-upload-form
     {
         margin-top:20vh;
@@ -216,7 +174,7 @@ onMounted(() =>
     {
         margin-left:auto;
         margin-right:auto;
-        width: 25%;
+        width: 100%;
     }
     .btn-custom
     {

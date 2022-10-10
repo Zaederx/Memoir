@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { makeScrapbookImagesMovable } from '@/helpers/scrapbook/scrapbook.js'
+
+
 onMounted(() => {
     makeScrapbookImagesMovable()
 })
@@ -23,7 +25,6 @@ onMounted(() => {
             <label class="form-check-label" for="flexSwitchCheckDefault">Drag or Rotate</label>
         </div>
         <div class="scrapbook-bg" id="scrapbook-bg">
-            <span class="draggable to-drag-example rotatible"></span>
         </div>
     </div>
     <SiteFooter></SiteFooter>
