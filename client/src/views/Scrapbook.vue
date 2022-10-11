@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { makeScrapbookImagesMovable } from '@/helpers/scrapbook/scrapbook.js'
+import { makeScrapbookImagesMovable, makeScrapbookImagesResizable } from '@/helpers/scrapbook/scrapbook.js'
 
 
 onMounted(() => {
     makeScrapbookImagesMovable()
+    makeScrapbookImagesResizable()
 })
 
 
@@ -19,12 +20,20 @@ onMounted(() => {
             <UploadForm></UploadForm>
         </Suspense>
     </div>
+    
     <div class="column-2 scrapbook">
+        <!-- Switch Drag or Rotate -->
         <div class="form-check form-switch switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+            <input class="form-check-input" type="checkbox" role="switch" id="switch-drag-rotate">
             <label class="form-check-label" for="flexSwitchCheckDefault">Drag or Rotate</label>
         </div>
+        <!-- Switch Fixed or Resizable -->
+        <div class="form-check form-switch switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="switch-fixed-resizeable">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Fixed or Resizeable</label>
+        </div>
         <div class="scrapbook-bg" id="scrapbook-bg">
+            <span class="to-drag-example draggable rotatible resizeable"></span>
         </div>
     </div>
     <SiteFooter></SiteFooter>

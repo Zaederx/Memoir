@@ -42,7 +42,6 @@ export function getImages()
     {
         for (let index = 0; index < input.files.length; index++) 
         {
-
             var file = input.files[index]
             addFileToScrapbook(file)
         }
@@ -70,6 +69,7 @@ export function fileToScrapbookImg(file:File):HTMLImageElement
     //add draggable and rotatible classes
     img.classList.add('draggable')
     img.classList.add('rotatible')
+    img.classList.add('resizeable')
     return img
 }
 
