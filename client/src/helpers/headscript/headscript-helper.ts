@@ -52,6 +52,11 @@ export function setHeadTags()
     bootstrapJS.integrity = 'sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK'
     bootstrapJS.crossOrigin = 'anonymous'
 
+    //html2Canvas dependency
+    const html2Canvas = document.createElement('script') as HTMLScriptElement
+    html2Canvas.type = 'text/javascript'
+    html2Canvas.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js'
+
     //create bootstrap css link element
     const bootstrapCSS = document.createElement('link') as HTMLLinkElement
     bootstrapCSS.type = 'text/css'
@@ -66,11 +71,13 @@ export function setHeadTags()
     fa.rel = 'stylesheet'
     fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
 
+
+    
     // // <meta th:name="_csrf" th:content="${_csrf.token}"/>
     // const csrfToken = document.createElement('meta') as HTMLMetaElement
     // csrfToken.name = 'csrf-token'
     // csrfToken.content="${csrf-token.token}"
 
     //add popperjs, bootstrapJS and bootstrapCSS to head tag
-    document.head.append( popperjs, bootstrapJS, bootstrapCSS, fa)
+    document.head.append( popperjs, bootstrapJS, html2Canvas, bootstrapCSS, fa)
 }

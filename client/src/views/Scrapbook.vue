@@ -21,7 +21,7 @@ onMounted(() => {
         </Suspense>
     </div>
     
-    <div class="column-2 scrapbook">
+    <div id="scrapbook" class="column-2 scrapbook">
         <!-- Switch Drag or Rotate -->
         <div class="form-check form-switch switch">
             <input class="form-check-input" type="checkbox" role="switch" id="switch-drag-rotate">
@@ -43,6 +43,13 @@ onMounted(() => {
 
 <style>
     @import url(../assets/base.css);
+    .canvas_image 
+    {
+        width: 100%;
+        height: 100%;
+        z-index: 5;
+    }
+    
     body 
     {
         background-image: url(../assets/photos-g9761b2a74_1920.jpg);

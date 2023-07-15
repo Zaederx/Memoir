@@ -2,7 +2,9 @@
 import { onMounted } from 'vue';
 import { makeCollapsibleSideways } from 'simplycollapsible-js'
 import { closePictureMenu, getImages, openPictureMenu, removeImgFromScrapbook } from '@/helpers/uploadForm/upload-form'
-
+import { printScrapbook, printScrapbook2 } from '@/helpers/scrapbook/scrapbook';
+import { Printer } from '../helpers/scrapbook/simplyprint.js'
+import type jsPDF from 'jspdf';
 onMounted(() => 
 {
     //make the scrapbook menu collapsible
@@ -15,14 +17,28 @@ onMounted(() =>
     const btnAddPictures = document.querySelector('#btn-add-pictures') as HTMLDivElement
     btnAddPictures.onclick = () => openPictureMenu()
 
+    //enable submit button
     const btnSubmit = document.querySelector('#btn-submit-images') as HTMLDivElement
     btnSubmit.onclick = () => getImages()
 
+    //enable x (close) button
     const btnClose = document.querySelector('#btn-close') as HTMLDivElement
     btnClose.onclick = () => closePictureMenu()
 
+    //enable remove image button
     const btnRemoveImg = document.querySelector('#btn-remove-pictures') as HTMLButtonElement
     btnRemoveImg.onclick = () => removeImgFromScrapbook()
+
+    //enable print button
+    const btnPrint = document.querySelector('#btn-print') as HTMLDivElement
+    btnPrint.onclick = () => {
+        var printer:Printer = new Printer()
+        const scrapbook = document.querySelector('#scrapbook') as HTMLDivElement
+        const canvasBefore = document.createElement('canvas') as HTMLCanvasElement
+        var { pdf, canvas} = printer.producePdf(scrapbook, canvasBefore)
+        pdf.save()
+        document.querySelector('#scrapbook')!.appendChild(canvas)
+    }
 
 })
 

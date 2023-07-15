@@ -1,7 +1,12 @@
+import html2canvas from 'html2canvas';
+import { jsPDF } from "jspdf";
 import { makeDraggable } from 'simplydrag-js'
 import { makeRotatable } from 'simplyrotate-js'
 
-
+/**
+ * Makes scrapbook images draggable or rotatible dependent on switch mode
+ * Noe you can only dray or rotate while images is not resizeable
+ */
 export function makeScrapbookImagesMovable()
 {
     //object draggable by default
@@ -16,7 +21,7 @@ export function makeScrapbookImagesMovable()
         if (dragRotateSwitch.checked == false)
         {
             var draggableArr = document.querySelectorAll(".draggable") ;
-            draggableArr.forEach((draggable)=>makeDraggable(draggable as HTMLElement))
+            draggableArr.forEach((draggable) => makeDraggable(draggable as HTMLElement))
         }
         //make images rotatible
         else
@@ -27,6 +32,9 @@ export function makeScrapbookImagesMovable()
     }
 }
 
+/**
+ * Makes scrapbook images resizable depending on switch mode
+ */
 export function makeScrapbookImagesResizable()
 {
  
@@ -35,16 +43,15 @@ export function makeScrapbookImagesResizable()
 
     resizeSwitch.onchange = () => 
     {
+        var resizeableArr = document.querySelectorAll('.resizeable')
         //if checked - make images resizable
         if(resizeSwitch.checked == true)
         {
-            var resizeableArr = document.querySelectorAll('.resizeable')
             resizeableArr.forEach((r) => makeResizable(r as HTMLElement))
         }
         //else make images not resizable
         else
         {
-            var resizeableArr = document.querySelectorAll('.resizeable')
             resizeableArr.forEach((r) => makeNotResizable(r as HTMLElement))
         }
         
@@ -52,6 +59,10 @@ export function makeScrapbookImagesResizable()
     
 }
 
+/**
+ * makes an individual element resizeable
+ * @param element to resize
+ */
 function makeResizable(element: HTMLElement)
 {
     element.onmousemove = null
@@ -60,6 +71,10 @@ function makeResizable(element: HTMLElement)
     element.style.overflow = 'auto'
 }
 
+/**
+ * Makes element not resizeable
+ * @param element element to make not resizeable
+ */
 function makeNotResizable(element: HTMLElement) 
 {
     var dragRotateSwitch = document.querySelector('#switch-drag-rotate') as HTMLInputElement
@@ -75,4 +90,68 @@ function makeNotResizable(element: HTMLElement)
             var rotatibleArr = document.querySelectorAll('.rotatible')
             rotatibleArr.forEach((r) => makeRotatable(r as HTMLElement))
         }
+}
+
+/**
+ * Checks whether and element is part of the scrapbook.
+ * the scrapbook border, white background and images
+ * @param element element to be validated
+ */
+function ignoreNonScrapbookElements(element: HTMLElement):boolean
+{
+    console.log(`element id:${element.id}, tagname:${element.tagName}`)
+
+    var scrapbook = document.querySelector('#scrapbook')
+    var scrapbookbg = document.querySelector('#scrapbook-bg')
+    // var valid = (element == document.head || element == document.body || element == scrapbook || element == scrapbookbg || (element.tagName == 'IMG' && scrapbookbg?.contains(element)))
+
+    var valid = !(element.id == 'navbar' || element.className == 'column-1' || element.id == 'footer' || element.classList.contains('to-drag-example') || element.classList.contains('switch'))
+    const ignore = true
+    const include = false
+    console.log(`valid:${valid}`)
+    if(valid) { return include}
+    else { return ignore }
+}
+export async function printScrapbook2() 
+{
+    //get the scrapbook
+    const scrapbook = document.querySelector('#scrapbook') as HTMLDivElement
+    const head = document.head.innerHTML
+    const body = document.body.innerHTML
+    var pdf = new jsPDF('p','pt','a4')
+
+    pdf.html(head+body,{})
+    pdf.save('scrapbook.pdf')
+}
+export async function printScrapbook()
+{
+    console.log('print scrapbook called')
+    //get the scrapbook
+    const scrapbook = document.querySelector('#scrapbook') as HTMLDivElement
+    //create canvas image
+    var canvas = await html2canvas(document.body, {
+        allowTaint:true,//allow images from other sites
+        width:1000,
+        height:1000,
+        windowWidth: Number(scrapbook.style.width),
+        windowHeight: Number(scrapbook.style.width),
+        ignoreElements: (element:Element) => ignoreNonScrapbookElements(element as HTMLElement)
+    }) as HTMLElement //says canvas bu really returns an iframe
+    // canvas.style.width = '100px'
+    // canvas.style.height = '100px'
+    // canvas.classList.add('canvas_image')
+    // console.log(`canvas:${canvas}`)
+   
+    
+    document.body.appendChild(canvas)
+    // //create a new print window area
+    // var newWin = 'PrintWindow.html'
+    // // const head = document.head.cloneNode(true)
+    // var printArea = window.open(newWin, 'PRINT') as Window
+    // printArea.onpageshow = () => {
+    //     printArea.document.body.appendChild(canvas)
+    //     printArea.print()
+    // }
+    
+
 }
