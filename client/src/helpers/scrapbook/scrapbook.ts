@@ -2,7 +2,7 @@ import html2canvas from 'html2canvas';
 import { jsPDF } from "jspdf";
 import { makeDraggable } from 'simplydrag-js'
 import { makeRotatable } from 'simplyrotate-js'
-
+import { Printer } from './simplyprint';
 /**
  * Makes scrapbook images draggable or rotatible dependent on switch mode
  * Noe you can only dray or rotate while images is not resizeable
@@ -112,46 +112,21 @@ function ignoreNonScrapbookElements(element: HTMLElement):boolean
     if(valid) { return include}
     else { return ignore }
 }
-export async function printScrapbook2() 
-{
-    //get the scrapbook
-    const scrapbook = document.querySelector('#scrapbook') as HTMLDivElement
-    const head = document.head.innerHTML
-    const body = document.body.innerHTML
-    var pdf = new jsPDF('p','pt','a4')
+// export async function printScrapbook2() 
+// {
+//     //get the scrapbook
+//     const scrapbook = document.querySelector('#scrapbook') as HTMLDivElement
+//     const head = document.head.innerHTML
+//     const body = document.body.innerHTML
+//     var pdf = new jsPDF('p','pt','a4')
 
-    pdf.html(head+body,{})
-    pdf.save('scrapbook.pdf')
-}
+//     pdf.html(head+body,{})
+//     pdf.save('scrapbook.pdf')
+// }
+
+
 export async function printScrapbook()
 {
-    console.log('print scrapbook called')
-    //get the scrapbook
-    const scrapbook = document.querySelector('#scrapbook') as HTMLDivElement
-    //create canvas image
-    var canvas = await html2canvas(document.body, {
-        allowTaint:true,//allow images from other sites
-        width:1000,
-        height:1000,
-        windowWidth: Number(scrapbook.style.width),
-        windowHeight: Number(scrapbook.style.width),
-        ignoreElements: (element:Element) => ignoreNonScrapbookElements(element as HTMLElement)
-    }) as HTMLElement //says canvas bu really returns an iframe
-    // canvas.style.width = '100px'
-    // canvas.style.height = '100px'
-    // canvas.classList.add('canvas_image')
-    // console.log(`canvas:${canvas}`)
-   
-    
-    document.body.appendChild(canvas)
-    // //create a new print window area
-    // var newWin = 'PrintWindow.html'
-    // // const head = document.head.cloneNode(true)
-    // var printArea = window.open(newWin, 'PRINT') as Window
-    // printArea.onpageshow = () => {
-    //     printArea.document.body.appendChild(canvas)
-    //     printArea.print()
-    // }
-    
-
+    var printer = new Printer('#scrapbook-bg');
+    printer.print()
 }

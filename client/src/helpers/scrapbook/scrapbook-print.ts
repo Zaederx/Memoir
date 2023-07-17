@@ -10,7 +10,7 @@ export class Printer
         this.cssArr = css
         //get element and make a copy
         var element = (document.querySelector(selector) as HTMLElement)
-        var clone = this.cloneNodeAndDescendents(element)
+        var clone = this.cloneNodeAndDescendents(element,0)
         console.log('clone:', clone)
         //prepare a new window
         var url = ''
@@ -30,15 +30,20 @@ export class Printer
         console.log('newWindow.document:',this.newWindow.document)
     }
 
-    cloneNodeAndDescendents(element:HTMLElement)
+    cloneNodeAndDescendents(element:HTMLElement,i:number)
     {
         //get childNode
-        var clone = element.cloneNode()
-        
+        var clone = element.cloneNode() as HTMLElement
+        //change class to get it ready for printing
+        if (i == 0)
+        {
+            clone.setAttribute('class', 'scrapbook-print')
+        }
+        i++
         element.childNodes.forEach((childNode) => 
         {
             //recusively called cloneNodeAndDescendents on childNodes
-            var childNodeWithDescendents =this.cloneNodeAndDescendents(childNode as HTMLElement)
+            var childNodeWithDescendents =this.cloneNodeAndDescendents(childNode as HTMLElement,i)
             //get the returned childNodes appended to parent clone
             clone.appendChild(childNodeWithDescendents)
             

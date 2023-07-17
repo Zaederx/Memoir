@@ -2,9 +2,12 @@
 import { onMounted } from 'vue';
 import { makeCollapsibleSideways } from 'simplycollapsible-js'
 import { closePictureMenu, getImages, openPictureMenu, removeImgFromScrapbook } from '@/helpers/uploadForm/upload-form'
-import { printScrapbook, printScrapbook2 } from '@/helpers/scrapbook/scrapbook';
-import { Printer } from '../helpers/scrapbook/simplyprint.js'
-import type jsPDF from 'jspdf';
+import { printScrapbook } from '@/helpers/scrapbook/scrapbook';
+import { Printer } from '../helpers/scrapbook/scrapbook-print.js'
+import jsPDF from 'jspdf';
+import uploadformCss from '../assets/uploadform.css'
+
+import printCss from '../assets/print.css'
 onMounted(() => 
 {
     //make the scrapbook menu collapsible
@@ -32,22 +35,12 @@ onMounted(() =>
     //enable print button
     const btnPrint = document.querySelector('#btn-print') as HTMLDivElement
     btnPrint.onclick = () => {
-        var printer:Printer = new Printer()
-        const scrapbook = document.querySelector('#scrapbook') as HTMLDivElement
-        const canvasBefore = document.createElement('canvas') as HTMLCanvasElement
-        var { pdf, canvas} = printer.producePdf(scrapbook, canvasBefore)
-        pdf.save()
-        document.querySelector('#scrapbook')!.appendChild(canvas)
+        var cssArr = [uploadformCss, printCss]
+        var printer = new Printer('#scrapbook', cssArr)
+        printer.print()
     }
 
 })
-
-
-    
-    
-
-    
-
 </script>
 
 <template>
@@ -86,120 +79,6 @@ onMounted(() =>
     </div>
 </template>
 <style scoped>
-    @import url('../assets/base.css');
+    @import url('../assets/uploadform.css');
     @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-
-    .btn-close
-    {
-        background-color:red;
-        float:right;
-    }
-    .btn-upload-form
-    {
-        margin-top:20vh;
-        margin-left: 30%;
-        z-index: 3;
-        position: relative;
-    }
-    .title
-    {
-        display:inline-block;
-        font-family: 'Roboto', sans-serif;
-        font-size: 30px;
-        padding:10px;
-        writing-mode: vertical-rl;
-        text-orientation: upright;
-        position: relative;
-        margin-top: 30px;
-        margin-left: 20px;
-        /* left:130px; */
-        z-index: 2;
-        pointer-events:none
-    }
-
-    /* Collapse CSS */
-    .collapsible
-    {
-        /* border radius for  */
-        border-top-left-radius: 50px;
-        border-top-right-radius: 50px;
-        border-bottom-left-radius: 50px;
-        border-bottom-right-radius: 50px;
-
-        margin-left: 30px;
-        cursor: pointer;
-        position: relative;
-        margin-bottom:400px;
-        background-color: var(--teal);/* adjust as needed */
-        height: 400px;/* adjust as needed */
-        width: 100px;/* adjust as needed */
-        z-index: 1;
-    }
-
-    .collapsible:hover
-    {
-        background-color: var(--mint) /* adjust as needed */
-    }
-
-    /* Collapse content CSS */
-    .collapsible-content
-    {
-        border-top-left-radius: 0;
-        border-top-right-radius: 5%;
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 5%;
-
-        position:relative;
-        background-color: var(--teal);
-        overflow:hidden;
-        margin-top: -270px;
-        margin-left: 95px;
-        max-width: 0px;
-        height: 300px;
-
-        /* adjust as needed */
-        -webkit-transition: max-width 2s ease-out;
-        -moz-transition: max-width 2s ease-out;
-        transition: max-width 2s ease-out;
-        z-index: 3;
-    }
-    
-    .content-background
-    {
-        background-color:white;
-        border-radius: 5%;
-        margin-top: 25px;
-        margin-left: 20px;
-        max-width: 250px;
-        height: 250px;
-    }
-
-    .form-upload
-    {
-        padding: 40px;
-        width: 30px;
-        height: 100px;
-        background-color: white;
-    }
-    .input-file
-    {
-
-    }
-
-    .cc-title
-    {
-        margin-left:auto;
-        margin-right:auto;
-        width: 100%;
-    }
-    .btn-custom
-    {
-        background-color: var(--light-grey);
-        border-radius: 5px;
-        margin-top: 5px;
-        margin-bottom: 5px;
-        margin-left: auto;
-        margin-right: auto;
-        width: 50%;
-    }
 </style>

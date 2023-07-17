@@ -15,3 +15,13 @@ https://www.mongodb.com/docs/manual/reference/operator/query/
 
 Here's how to do pagination with MongoDB
 https://www.mongodb.com/docs/manual/reference/method/cursor.skip/#using-skip--
+
+
+## Creating Pages for printing - HTML & CSS is under the hood of most eReaaader formats - who knew :)
+https://www.smashingmagazine.com/2015/01/designing-for-print-with-css/
+
+```
+@page {
+    size: A4 landscape
+}
+```
