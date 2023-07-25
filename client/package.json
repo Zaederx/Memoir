@@ -19,8 +19,10 @@
     "jquery": "^3.6.1",
     "jspdf": "^2.5.1",
     "pinia": "^2.0.21",
-    "simplycollapsible-js": "^1.0.3",
-    "simplydrag-js": "^1.1.4",
+    "printformatted-js": "^1.0.7",
+    "simplycollapsible-js": "^1.1.0",
+    "simplydrag-js": "^1.1.7",
+    "simplyprint-js": "^2.0.2",
     "simplyrotate-js": "^1.0.1",
     "vue": "^3.2.38",
     "vue-router": "^4.1.5"

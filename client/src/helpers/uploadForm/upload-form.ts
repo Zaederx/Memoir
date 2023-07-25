@@ -59,7 +59,9 @@ export function fileToScrapbookImg(file:File):HTMLImageElement
     var img = document.createElement('img') as HTMLImageElement;
     //add image to span
     var imgSrc = URL.createObjectURL(file)
+    console.log('imgSrc:',imgSrc)
     img.style.backgroundImage = `url(${imgSrc})`;
+    //set images to tag set self as current image on click
     img.onclick = () => 
     {
         var imgStore = useCurrentImgStore()

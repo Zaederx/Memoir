@@ -49,14 +49,15 @@ body
     margin-left: 100px;
 }
 
-.grid-container > .scrapbook
+.scrapbook
 {
-    /* width: 500px; */
+    width: 297mm;
+    height: 192mm;
     border-style:dotted;
     background-color: var(--cool-grey);
 }
 
-.grid-container > .scrapbook > .scrapbook-bg
+.scrapbook-bg
 {
     border-radius: 50px;
     height: 90%;
@@ -65,19 +66,15 @@ body
     background-color:var(--light-grey);
     z-index: 0;
 }
+
 .draggable
 {
     background-size: 100% 100%;
-    position: absolute;
-    padding: 100px;
     background-color: green;
     background-image: url();
+    position: absolute;
+    padding: 100px;
     width:100px;
     height:40px;
-    /* don'd add margin to this or it won't work */
-}
-.to-drag-example
-{
-    background-image: url(../assets/photos-g9761b2a74_1920.jpg);
-    /* don'd add margin to this or it won't work */
+    /* don't add margin to this or it won't work */
 }

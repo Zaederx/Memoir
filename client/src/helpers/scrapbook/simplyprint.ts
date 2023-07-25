@@ -1,6 +1,7 @@
-import { jsPDF } from 'jspdf'
-import { handleElement, handleImage, handleText } from './helpers';
-// Convert canvas to pdf - https://stackoverflow.com/questions/23681325/convert-canvas-to-pdf
+/**
+ * Class to help print all a node and all child nodes of a given element.
+ * Allows for css to be applied.
+ */
 export class Printer 
 {
     newWindow:Window & typeof globalThis;
@@ -25,11 +26,13 @@ export class Printer
         }
         //write contents to window
         this.newWindow ? this.newWindow.document.body.appendChild(clone) : null
-        //closes an output stream and forces set data to display
-        // this.newWindow ? this.newWindow.document.close() : null
-        console.log('newWindow.document:',this.newWindow.document)
     }
 
+    /**
+     * Clones all nodes and descendent nodes.
+     * Does this so that nodes can then be appeneded to
+     * a new window for printing.
+     */
     cloneNodeAndDescendents(element:HTMLElement)
     {
         //get childNode
@@ -47,17 +50,25 @@ export class Printer
         return clone
     }
 
+    /**
+     * An internal class function for add css styling to the document.
+     * @param cssArr 
+     */
     addCssStyling(cssArr:string[])
     {
         if (cssArr)
         {
-            cssArr.forEach((css) => 
+            cssArr.forEach((css:string) => 
             {
-                //set style of doc to be landscape
+                //create a style tag
                 var style = document.createElement('style') as HTMLStyleElement
                 style.setAttribute('type', 'text/css')
-                // style.setAttribute('media', 'print')
-                style.appendChild(document.createTextNode(css))
+
+                // style.setAttribute('media', 'print')// to set it to only apply to printing - thought better of this - incase you want to preivew the page - better not to
+
+                //create css node and add style
+                var node = document.createTextNode(css)
+                style.appendChild(node)
                 //add styling to the window document head
                 this.newWindow.document.head.appendChild(style)
                 
@@ -66,10 +77,7 @@ export class Printer
     }
     print()
     {
-        
-        console.log(this.newWindow)
         //print and then close
         this.newWindow.print()
-
     }
 }

@@ -1,53 +1,5 @@
 @import url(../assets/base.css);
 
-
-.scrapbook-print > .switch
-{
-
-    margin-left: 100px;
-    display: none;
-}
-
-.scrapbook-print
-{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height:180mm;
-    
-    border-style:dotted;
-    background-color: var(--cool-grey);
-}
-
-.scrapbook-print > .scrapbook-bg
-{
-    border-radius: 50px;
-    height: 90%;
-    width: 90%;
-    margin: auto;
-    margin-top: 1px;
-    margin-bottom: 1px;
-    background-color:var(--light-grey);
-    z-index: 0;
-}
-
-.draggable
-{
-    background-size: 100% 100%;
-    position: absolute;
-    padding: 100px;
-    background-color: green;
-    background-image: url();
-    width:100px;
-    height:40px;
-    /* don'd add margin to this or it won't work */
-}
-.to-drag-example
-{
-    background-image: url(../assets/photos-g9761b2a74_1920.jpg);
-    /* don'd add margin to this or it won't work */
-}
-
 @page 
 {
     size: A4 landscape;
@@ -60,6 +12,61 @@
     html,body
     {
         width: 297mm;
-        height: 180mm;
+        height: 210mm;
+        margin:0;
     }
 }
+
+/* Print background images and colours */
+* {
+    -webkit-print-color-adjust: exact !important;   /* Chrome, Safari 6 – 15.3, Edge */
+    color-adjust: exact !important;                 /* Firefox 48 – 96 */
+    print-color-adjust: exact !important;           /* Firefox 97+, Safari 15.4+ */
+}
+
+.switch
+{
+    /* margin-left: 100px; */
+    display: none;
+}
+
+.scrapbook
+{
+    display: flexbox;
+    align-items: center;
+    justify-content: center;
+    height:210mm; /*purposely < 210mm */
+    width: 297mm;
+    border-style:dotted;
+    background-color: var(--cool-grey);
+    z-index: 1;
+}
+
+.scrapbook > .scrapbook-bg
+{
+    border-radius: 50px;
+    height: 90%;
+    width: 90%;
+    margin: auto;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    background-color:var(--light-grey);
+    z-index: 2;
+}
+
+.draggable
+{
+    background-size: 100% 100%;
+    position: relative;
+    padding: 100px;
+    /* background-color: green; */
+    background-image: url();
+    width:100px;
+    height:40px;
+    z-index: 3;
+    /* left:attr(data-scrapbook-x px); */
+    /* top:attr(data-scrapbook-y px); */
+    position:absolute;
+    /* don't add margin to this or it won't work */
+}
+

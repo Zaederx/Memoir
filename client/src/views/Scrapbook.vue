@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { makeScrapbookImagesMovable, makeScrapbookImagesResizable } from '@/helpers/scrapbook/scrapbook.js'
-import scrapbook from '../assets/scrapbook.css'
 
 onMounted(() => {
     makeScrapbookImagesMovable()
@@ -33,7 +32,6 @@ onMounted(() => {
             <label class="form-check-label" for="flexSwitchCheckDefault">Fixed or Resizeable</label>
         </div>
         <div class="scrapbook-bg" id="scrapbook-bg">
-            <span class="to-drag-example draggable rotatible resizeable"></span>
         </div>
     </div>
     <SiteFooter></SiteFooter>

@@ -1,18 +1,14 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { makeCollapsibleSideways } from 'simplycollapsible-js'
+import { makeCollapsibleSideways, addCssStyling, collapsibleCssSideways } from 'simplycollapsible-js'
 import { closePictureMenu, getImages, openPictureMenu, removeImgFromScrapbook } from '@/helpers/uploadForm/upload-form'
-import { printScrapbook } from '@/helpers/scrapbook/scrapbook';
-import { Printer } from '../helpers/scrapbook/scrapbook-print.js'
-import jsPDF from 'jspdf';
-import uploadformCss from '../assets/uploadform.css'
-
+import { Printer } from 'simplyprint-js'
 import printCss from '../assets/print.css'
+import { printFormatted } from 'printformatted-js'
 onMounted(() => 
 {
-    //make the scrapbook menu collapsible
-    var width = 300
-    const collapsibleArr = document.querySelectorAll('.collapsible')
+    const width = 300
+    const collapsibleArr = document.querySelectorAll('.collapsible-sideways')
     collapsibleArr.forEach((col) => makeCollapsibleSideways(col as HTMLElement, width))
     
     //make menu functional
@@ -35,9 +31,36 @@ onMounted(() =>
     //enable print button
     const btnPrint = document.querySelector('#btn-print') as HTMLDivElement
     btnPrint.onclick = () => {
-        var cssArr = [uploadformCss, printCss]
+        
+        var draggableArr = document.querySelectorAll('.draggable') as NodeListOf<HTMLElement>
+        draggableArr.forEach((draggableElement) => 
+        {
+            //set x as relative to parent element when a x,y = 0,0
+            draggableElement.style.left = draggableElement.getAttribute('data-scrapbook-x') as string
+            draggableElement.style.top = draggableElement.getAttribute('data-scrapbook-y') as string
+        })
+
+        //print
+        var cssArr = [printCss]
         var printer = new Printer('#scrapbook', cssArr)
         printer.print()
+
+        //set images in scrapbook back to the original positions
+        var scrapbook = document.querySelector('#scrapbook') as HTMLElement
+        draggableArr.forEach((draggableElement) => 
+        {
+            var sbX = scrapbook.getBoundingClientRect().x
+            var sbY = scrapbook.getBoundingClientRect().y
+
+            var xRelSB = Number(draggableElement.getAttribute('data-scrapbook-x'))
+            var yRelSB = Number(draggableElement.getAttribute('data-scrapbook-y'))
+
+            var orignialX:number = sbX + xRelSB
+            var originalY:number = sbY + yRelSB
+            //set x as relative to parent element when a x,y = 0,0
+            draggableElement.style.left = String(orignialX)
+            draggableElement.style.top = String(originalY)
+        })
     }
 
 })
@@ -46,11 +69,11 @@ onMounted(() =>
 <template>
     <div class="btn-upload-form">
         
-        <div id="collapsible" class="collapsible">
+        <div id="collapsible" class="collapsible-sideways">
             <div class="title">
                 SCRAPBOOK
             </div>
-            <div class="collapsible-content" id="collapse-1">
+            <div class="collapsible-content-sideways" id="collapse-1">
                 <div class="content-background">
                     <div id="menu-1">
                         <div class="cc-title">Menu</div>

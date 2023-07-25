@@ -1,17 +1,17 @@
-import html2canvas from 'html2canvas';
-import { jsPDF } from "jspdf";
-import { makeDraggable } from 'simplydrag-js'
+import { makeDraggable, type options } from 'simplydrag-js'
 import { makeRotatable } from 'simplyrotate-js'
-import { Printer } from './simplyprint';
+import { Printer } from 'simplyprint-js';
 /**
  * Makes scrapbook images draggable or rotatible dependent on switch mode
- * Noe you can only dray or rotate while images is not resizeable
+ * Now you can only drag or rotate while images are not resizeable
  */
 export function makeScrapbookImagesMovable()
 {
+    var scrapbook = document.querySelector('#scrapbook') as HTMLElement
+    const options = {dataAttributeName:'scrapbook', parentElement:scrapbook} as options
     //object draggable by default
     var draggableArr = document.querySelectorAll(".draggable") ;
-    draggableArr.forEach((draggable)=> makeDraggable(draggable as HTMLElement))
+    draggableArr.forEach((draggable)=> makeDraggable(draggable as HTMLElement, options))
     //drag rotate switch
     var dragRotateSwitch = document.querySelector('#switch-drag-rotate') as HTMLInputElement
     //on change...
@@ -20,8 +20,9 @@ export function makeScrapbookImagesMovable()
         //if switch is checked - make images draggable
         if (dragRotateSwitch.checked == false)
         {
-            var draggableArr = document.querySelectorAll(".draggable") ;
-            draggableArr.forEach((draggable) => makeDraggable(draggable as HTMLElement))
+            var draggableArr = document.querySelectorAll(".draggable");
+            
+            draggableArr.forEach((draggable) => makeDraggable(draggable as HTMLElement, options))
         }
         //make images rotatible
         else
@@ -82,8 +83,10 @@ function makeNotResizable(element: HTMLElement)
     element.style.overflow = 'visible'//default setting
     if (dragRotateSwitch.checked == false)
         {
+            var scrapbook = document.querySelector('#scrapbook')
+            const options = {dataAttributeName:'scrapbook', parentElement:scrapbook} as options
             var draggableArr = document.querySelectorAll(".draggable") ;
-            draggableArr.forEach((draggable)=>makeDraggable(draggable as HTMLElement))
+            draggableArr.forEach((draggable)=> makeDraggable(draggable as HTMLElement, options))
         }
         else
         {
@@ -112,21 +115,10 @@ function ignoreNonScrapbookElements(element: HTMLElement):boolean
     if(valid) { return include}
     else { return ignore }
 }
-// export async function printScrapbook2() 
-// {
-//     //get the scrapbook
-//     const scrapbook = document.querySelector('#scrapbook') as HTMLDivElement
-//     const head = document.head.innerHTML
-//     const body = document.body.innerHTML
-//     var pdf = new jsPDF('p','pt','a4')
-
-//     pdf.html(head+body,{})
-//     pdf.save('scrapbook.pdf')
-// }
 
 
 export async function printScrapbook()
 {
-    var printer = new Printer('#scrapbook-bg');
+    var printer = new Printer('#scrapbook');
     printer.print()
 }
