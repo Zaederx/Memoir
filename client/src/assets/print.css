@@ -1,6 +1,6 @@
 @import url(../assets/base.css);
 
-@page 
+@page
 {
     size: A4 landscape;
     margin: 0;
@@ -9,7 +9,7 @@
 /* A4 size landscape */
 @media print 
 {
-    html,body
+    html, body .scrapbook
     {
         width: 297mm;
         height: 210mm;
@@ -23,8 +23,11 @@
     color-adjust: exact !important;                 /* Firefox 48 – 96 */
     print-color-adjust: exact !important;           /* Firefox 97+, Safari 15.4+ */
 }
-
-.switch
+.switches
+{
+    height: 5%;
+}
+.switches > *
 {
     /* margin-left: 100px; */
     display: none;
@@ -58,11 +61,10 @@
 {
     background-size: 100% 100%;
     position: relative;
-    padding: 100px;
     /* background-color: green; */
     background-image: url();
     width:100px;
-    height:40px;
+    height:100px;
     z-index: 3;
     /* left:attr(data-scrapbook-x px); */
     /* top:attr(data-scrapbook-y px); */

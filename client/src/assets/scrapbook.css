@@ -13,7 +13,6 @@ body
     /* fixed - creates cool effect while scrolling */
     background-attachment: fixed;
     background-size: 100% 100%;
-    
 }
 
 .grid-container
@@ -44,11 +43,17 @@ body
     grid-row: footer;
 }
 
-.switch
+.switches > *
 {
+    margin:0;
     margin-left: 100px;
+    height: 2.5%;
 }
 
+.form-check 
+{
+    display: inline-block!important;
+}
 .scrapbook
 {
     width: 297mm;
@@ -73,8 +78,7 @@ body
     background-color: green;
     background-image: url();
     position: absolute;
-    padding: 100px;
     width:100px;
-    height:40px;
+    height:100px;
     /* don't add margin to this or it won't work */
 }

@@ -36,8 +36,8 @@ onMounted(() =>
         draggableArr.forEach((draggableElement) => 
         {
             //set x as relative to parent element when a x,y = 0,0
-            draggableElement.style.left = draggableElement.getAttribute('data-scrapbook-x') as string
-            draggableElement.style.top = draggableElement.getAttribute('data-scrapbook-y') as string
+            draggableElement.style.left = draggableElement.getAttribute('data-scrapbook-x') as string + 'px'
+            draggableElement.style.top = draggableElement.getAttribute('data-scrapbook-y') as string + 'px'
         })
 
         //print
@@ -47,19 +47,19 @@ onMounted(() =>
 
         //set images in scrapbook back to the original positions
         var scrapbook = document.querySelector('#scrapbook') as HTMLElement
+        var sbX = scrapbook.getBoundingClientRect().x
+        var sbY = scrapbook.getBoundingClientRect().y
         draggableArr.forEach((draggableElement) => 
         {
-            var sbX = scrapbook.getBoundingClientRect().x
-            var sbY = scrapbook.getBoundingClientRect().y
-
             var xRelSB = Number(draggableElement.getAttribute('data-scrapbook-x'))
             var yRelSB = Number(draggableElement.getAttribute('data-scrapbook-y'))
 
             var orignialX:number = sbX + xRelSB
             var originalY:number = sbY + yRelSB
+
             //set x as relative to parent element when a x,y = 0,0
-            draggableElement.style.left = String(orignialX)
-            draggableElement.style.top = String(originalY)
+            draggableElement.style.left = String(orignialX) + 'px'
+            draggableElement.style.top = String(originalY) + 'px'
         })
     }
 

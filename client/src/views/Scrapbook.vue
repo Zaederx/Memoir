@@ -22,15 +22,18 @@ onMounted(() => {
     
     <div id="scrapbook" class="row-1 column-2 scrapbook">
         <!-- Switch Drag or Rotate -->
-        <div class="form-check form-switch switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="switch-drag-rotate">
-            <label class="form-check-label" for="flexSwitchCheckDefault">Drag or Rotate</label>
+        <div class="switches">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="switch-drag-rotate">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Drag or Rotate</label>
+            </div>
+            <!-- Switch Fixed or Resizable -->
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="switch-fixed-resizeable">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Fixed or Resizeable</label>
+            </div>
         </div>
-        <!-- Switch Fixed or Resizable -->
-        <div class="form-check form-switch switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="switch-fixed-resizeable">
-            <label class="form-check-label" for="flexSwitchCheckDefault">Fixed or Resizeable</label>
-        </div>
+        
         <div class="scrapbook-bg" id="scrapbook-bg">
         </div>
     </div>
