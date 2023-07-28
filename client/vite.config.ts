@@ -29,9 +29,9 @@ export default defineConfig({
     },
     proxy:
     {
-      '/api':
+      '/api'://this is the api used to target the server at localhost:5000
       {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:5000',//the address of the server
         changeOrigin: true,
         rewrite: (path:any) => path.replace(/^\/api/, ''),
         secure:false,//https?
@@ -39,5 +39,5 @@ export default defineConfig({
       }
     }
   },
-  experimentalDisableTemplateSupport: true
+  // experimentalDisableTemplateSupport: true
 })
