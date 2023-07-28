@@ -1,6 +1,7 @@
 import { useCurrentImgStore } from "@/stores/currentImg.js"
 import { makeScrapbookImagesMovable } from "../scrapbook/scrapbook.js"
-
+import { Printer } from "simplyprint-js"
+import printCss from '../../assets/print.css'
 
 /**
  * Opens picture menu and hides main menu
@@ -100,4 +101,38 @@ export function removeImgFromScrapbook()
     var imgStore = useCurrentImgStore()
     var img = imgStore.getCurrentImg()
     img?.remove()
+}
+
+export function printScrapbook()
+{
+    //set to the position that you will need it to be in for printing
+    var draggableArr = document.querySelectorAll('.draggable') as NodeListOf<HTMLElement>
+    draggableArr.forEach((draggableElement) => 
+    {
+        //set x as relative to parent element when a x,y = 0,0
+        draggableElement.style.left = draggableElement.getAttribute('data-scrapbook-x') as string + 'px'
+        draggableElement.style.top = draggableElement.getAttribute('data-scrapbook-y') as string + 'px'
+    })
+
+    //print
+    var cssArr = [printCss]
+    var printer = new Printer('#scrapbook', cssArr)
+    printer.print()
+
+    //set images in scrapbook back to the original positions
+    var scrapbook = document.querySelector('#scrapbook') as HTMLElement
+    var sbX = scrapbook.getBoundingClientRect().x
+    var sbY = scrapbook.getBoundingClientRect().y
+    draggableArr.forEach((draggableElement) => 
+    {
+        var xRelSB = Number(draggableElement.getAttribute('data-scrapbook-x'))
+        var yRelSB = Number(draggableElement.getAttribute('data-scrapbook-y'))
+
+        var orignialX:number = sbX + xRelSB
+        var originalY:number = sbY + yRelSB
+
+        //set x as relative to parent element when a x,y = 0,0
+        draggableElement.style.left = String(orignialX) + 'px'
+        draggableElement.style.top = String(originalY) + 'px'
+    })
 }
