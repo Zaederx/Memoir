@@ -25,3 +25,12 @@ https://www.smashingmagazine.com/2015/01/designing-for-print-with-css/
     size: A4 landscape
 }
 ```
+
+
+## MongoServerSelectionError: connection <monitor> to 15.236.172.151:27017 closed - Whitelist your ip address
+By setting mongodb to allow your ip address or all ip addresses to connect to your database, you will then stop this error.
+
+## Button href link not working - wrap them in `<a>` tags that have the href link
+<a href="/sign-up">
+    <button id="btn-sign-up" class="btn btn-warning form-control">Sign Up</button>
+</a>
