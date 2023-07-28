@@ -4,27 +4,29 @@
  */
 export async function fetchCSRFToken() 
 {
-    var proxyUrl = '/api/csrf-token'
-try {
-    //fetch csrf token from server
-    var response:Response = await fetch(proxyUrl,{
-                            method: 'GET',
-                            credentials: 'include' //whether user agent should send and recieve cookies - see [link](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials) and [link](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch)
-                            })
-    //get response in json format
-    var data = await response.json()
-    console.warn('************* End of script HeadSciprt.vue **************')
-    //create meta tag with csrf token
-    const csrfToken = document.createElement('meta') as HTMLMetaElement
-    csrfToken.name = 'csrf-token'
-    csrfToken.content = data.csrfToken
-    //append meta tag to header
-    document.head.append(csrfToken)
+    const proxyUrl = '/api/csrf-token'
+    try {
+        //fetch csrf token from server
+        var response:Response = await fetch(proxyUrl,{
+                                method: 'GET',
+                                credentials: 'include' //whether user agent should send and recieve cookies - see [link](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials) and [link](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch)
+                                })
+        //get response in json format
+        var data = await response.json()
+    
+        //create meta tag with csrf token
+        const csrfToken = document.createElement('meta') as HTMLMetaElement
+        csrfToken.id = 'csrf-token'
+        csrfToken.name = 'csrf-token'
+        csrfToken.content = data.csrfToken
+        //append meta tag to header
+        document.head.append(csrfToken)
     } 
     catch (error) 
     {
         console.warn('csrf token could not be obtained')
     }
+    console.warn('************* End of script fetchCSRFToken **************')
 }
 
 /**
