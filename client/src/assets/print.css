@@ -66,6 +66,10 @@
     width:100px;
     height:100px;
     z-index: 3;
+    /* IMPORTANT 
+    this may work in the future but no attr only works for content property
+    will save all the additional code in the printScrapbook function of the upload-form.ts script
+     */
     /* left:attr(data-scrapbook-x px); */
     /* top:attr(data-scrapbook-y px); */
     position:absolute;
