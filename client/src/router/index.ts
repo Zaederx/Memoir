@@ -10,7 +10,9 @@ import SiteFooter from '@/components/SiteFooter.vue'
 import Banner from '@/components/Banner.vue'
 import UploadForm from '@/components/UploadForm.vue'
 
+import SignUp from '@/views/SignUp.vue'
 import Login from '@/views/Login.vue'
+
 const routes = [
   {
     path: '/',
@@ -29,8 +31,13 @@ const routes = [
   },
   {
     path: '/login',
-    name: 'login',
+    name: 'Login',
     component: Login
+  },
+  {
+    path:'/sign-up',
+    name:'Sign-Up',
+    component: SignUp
   }
  
 ]
