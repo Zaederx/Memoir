@@ -3,6 +3,7 @@ import path from 'path';
 import { config as dotEnvConfig } from 'dotenv';
 import crudDriver from '../db/db.js';
 import bcrypt from 'bcryptjs';
+import { printFormatted } from 'printformatted-js';
 //get access to env file variables
 const envFilePath = path.join('..', 'demo.env'); //only accepts relative path
 dotEnvConfig({ path: envFilePath });
@@ -17,6 +18,7 @@ export async function authenticateCredentials(username, password) {
         var user = await db.findUserByUsername(username);
         if (!user)
             throw new Error('No user found');
+        printFormatted('yellow', 'user:', user);
         //if password match...
         if (await bcrypt.compare(password, user?.password)) {
             //login

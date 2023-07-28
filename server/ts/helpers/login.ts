@@ -5,6 +5,7 @@ import crudDriver from '../db/db.js'
 import bcrypt from 'bcryptjs'
 import { Cookie, createSessionCookie } from 'simplycookie-js'
 import { v4 as uuidv4 } from 'uuid';
+import { printFormatted } from 'printformatted-js'
 //get access to env file variables
 const envFilePath = path.join('..', 'demo.env')//only accepts relative path
 dotEnvConfig({path: envFilePath})
@@ -18,14 +19,13 @@ const uri = `mongodb+srv://memoir-cluster:${password}@memoir-cluster.g4ldqzg.mon
 //create a new 
 var db = new crudDriver(uri,'memoir')
 
-
-
 export async function authenticateCredentials(username:string,password:string):Promise<boolean>
 {
    try
    {
       var user =  await db.findUserByUsername(username)
       if (!user) throw new Error('No user found')
+      printFormatted('yellow', 'user:',user)
       //if password match...
       if (await bcrypt.compare(password, user?.password))
       {
