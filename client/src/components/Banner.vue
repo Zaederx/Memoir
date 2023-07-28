@@ -47,5 +47,4 @@
 
 <style scoped>
   @import url(../assets/base.css);
-
 </style>
