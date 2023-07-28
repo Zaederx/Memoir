@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { makeCollapsibleSideways, addCssStyling, collapsibleCssSideways } from 'simplycollapsible-js'
-import { closePictureMenu, getImages, openPictureMenu, removeImgFromScrapbook } from '@/helpers/uploadForm/upload-form'
+import { closePictureMenu, getImages, openPictureMenu, removeImgFromScrapbook, printScrapbook } from '@/helpers/uploadForm/upload-form'
 import { Printer } from 'simplyprint-js'
 import printCss from '../assets/print.css'
-import { printFormatted } from 'printformatted-js'
 onMounted(() => 
 {
     const width = 300
@@ -30,38 +29,7 @@ onMounted(() =>
 
     //enable print button
     const btnPrint = document.querySelector('#btn-print') as HTMLDivElement
-    btnPrint.onclick = () => {
-        
-        var draggableArr = document.querySelectorAll('.draggable') as NodeListOf<HTMLElement>
-        draggableArr.forEach((draggableElement) => 
-        {
-            //set x as relative to parent element when a x,y = 0,0
-            draggableElement.style.left = draggableElement.getAttribute('data-scrapbook-x') as string + 'px'
-            draggableElement.style.top = draggableElement.getAttribute('data-scrapbook-y') as string + 'px'
-        })
-
-        //print
-        var cssArr = [printCss]
-        var printer = new Printer('#scrapbook', cssArr)
-        printer.print()
-
-        //set images in scrapbook back to the original positions
-        var scrapbook = document.querySelector('#scrapbook') as HTMLElement
-        var sbX = scrapbook.getBoundingClientRect().x
-        var sbY = scrapbook.getBoundingClientRect().y
-        draggableArr.forEach((draggableElement) => 
-        {
-            var xRelSB = Number(draggableElement.getAttribute('data-scrapbook-x'))
-            var yRelSB = Number(draggableElement.getAttribute('data-scrapbook-y'))
-
-            var orignialX:number = sbX + xRelSB
-            var originalY:number = sbY + yRelSB
-
-            //set x as relative to parent element when a x,y = 0,0
-            draggableElement.style.left = String(orignialX) + 'px'
-            draggableElement.style.top = String(originalY) + 'px'
-        })
-    }
+    btnPrint.onclick = () => printScrapbook()
 
 })
 </script>
