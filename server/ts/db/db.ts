@@ -1,6 +1,7 @@
 import { config as dotEnvConfig } from 'dotenv'
 import { Db, MongoClient } from 'mongodb';
 import bcrypt from 'bcryptjs'
+import { printFormatted } from 'printformatted-js'
 /**
  * Class to perform Mongodb User CRUD opertations
  * Assumes the collection is called users.
@@ -20,7 +21,7 @@ class DbUserCrudDriver {
     this.database = this.client.db(this.dbClusterName)
   }
   /**
-   * Persists / saves usre to mongo db
+   * Persists / saves user to mongo db
    * @param name name of the user
    * @param username username of the user
    * @param password password of the user
@@ -28,16 +29,25 @@ class DbUserCrudDriver {
    * @param sessionId sessionId of the user
    */
   async addUser(name:string, username:string, password:string, email:string, sessionId?:string) {
+    printFormatted('blue', 'function addUser called')
+    printFormatted('yellow', 'name:',name,'\n','username:',username, '\n','password:',password, '\n','email:', email, '\n','sessionId:',sessionId)
     const collection = 'users'
     const data = 
     {
       name:name,
       username:username,
-      password:bcrypt.hash(password,8),
+      password: await bcrypt.hash(password,8),
       email:email,
       sessionId: sessionId ? sessionId : '',
     }
-    await this.addData(collection, data)
+    try 
+    {
+      await this.addData(collection, data)
+    } catch (error) 
+    {
+      printFormatted('red', error)
+    }
+    
   }
 
   /**
@@ -47,25 +57,34 @@ class DbUserCrudDriver {
    */
   async findUserByUsername(username:string) 
   {
-    try
+    printFormatted('blue','function findUserByUsername called' )
+    printFormatted('yellow', 'username:', username)
+    if (username != undefined || username != '')
     {
-      //find the right collection / column
-      const collection = 'users'
-      const users = this.database.collection(collection)
-      //get user by username
-      var query = {username:username}
-      const user = await users.findOne(query)
-      if (!user) 
+      try
       {
-        throw new Error('User not found')
+        //find the right collection / column
+        const collection = 'users'
+        const users = this.database.collection(collection)
+        //get user by username
+        var query = {username:username}
+        const user = await users.findOne(query)
+        if (!user) 
+        {
+          throw new Error('User not found')
+        }
+        return user
       }
-      return user
-    }
-    catch (e)
-    {
-      console.log(e)
-    }
-  
+      catch (e)
+      {
+        console.log(e)
+      }
+        
+      }
+      else 
+      {
+        printFormatted('red', 'username is blank or undefined')
+      }
   }
 
   async findUserBySessionId(sessionId: string)
@@ -110,12 +129,12 @@ class DbUserCrudDriver {
       }
       else
       {
-        throw new Error(`Problem adding ${collection} to database` )
+        throw new Error(`Problem adding collection '${collection}' with data '${data}' to database` )
       }
     }
     catch (e)
     {
-      console.log(e)
+      printFormatted('red', e)
     }
     
   }
