@@ -8,7 +8,10 @@
    <HeadScripts></HeadScripts>
    <Banner heading1="Chat" heading2="SignUp View"></Banner>
    <HomeMain>
-    <SignUpForm></SignUpForm>
+      <!-- needed because the singup fomr has a function returning a promise at top level -->
+      <Suspense> 
+         <SignUpForm></SignUpForm>
+      </Suspense>
    </HomeMain>
    <SiteFooter></SiteFooter>
 </template>

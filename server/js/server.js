@@ -68,18 +68,25 @@ server.post('/login', async (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
     printFormatted('yellow', 'username:', username, '\npassword:', password);
-    var valid = await authenticateCredentials(username, password);
-    //if valid return auth cookie
-    if (valid) {
-        const name = 'memoir-session';
-        const value = uuidv4(); //sessionId
-        const domain = 'localhost';
-        var cookie = createSessionCookie(name, value, domain);
-        res.headers['Set-Cookie'] = cookie.getCookieStr();
-        res.send({ res: true, message: 'User credentials were valid' });
+    try {
+        var valid = await authenticateCredentials(username, password);
+        //if valid return auth cookie
+        if (valid) {
+            const name = 'memoir-session';
+            const value = uuidv4(); //sessionId
+            const domain = 'localhost';
+            var cookie = createSessionCookie(name, value, domain);
+            printFormatted('yellow', 'session cookie:', cookie.getCookieStr());
+            res.setHeader('Set-Cookie', cookie.getCookieStr());
+            res.send({ res: true, message: 'User credentials were valid' });
+        }
+        else {
+            res.send({ res: false, message: 'User credentials were invalid' });
+        }
     }
-    else {
-        res.send({ res: false, message: 'User credentials were invalid' });
+    catch (error) {
+        res.send({ res: false, message: 'Problem logging in:' + error });
+        printFormatted('red', error);
     }
 });
 server.get('/logout', async (req, res) => {
@@ -88,6 +95,7 @@ server.get('/logout', async (req, res) => {
     const name = 'memoir-session';
     const domain = 'localhost';
     var cookie = createSessionCookie(name, null, domain);
+    printFormatted('yellow', 'session cookie:', cookie.getCookieStr());
     //set in header
     res.headers['Set-Cookie'] = cookie.getCookieStr();
     //and return to client wiht res true
@@ -102,7 +110,7 @@ server.post('/sign-up', async (req, res) => {
     const username = req.body.username;
     const sessionId = uuidv4(); //unique id
     //print request body parameters
-    printFormatted('yellow', 'name:', name, '\n', 'email', email, '\n', 'password1', password1, '\n', 'password2', password2, '\n', 'username', username, '\n', 'sessionId', sessionId);
+    printFormatted('yellow', 'name:', name, '\n', 'email:', email, '\n', 'password1:', password1, '\n', 'password2:', password2, '\n', 'username:', username, '\n', 'sessionId:', sessionId);
     if (password1 != password2) {
         res.send({
             res: false,

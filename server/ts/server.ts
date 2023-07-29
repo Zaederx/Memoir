@@ -4,7 +4,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import csrf from 'csurf'
 import { config as dotEnvConfig } from 'dotenv'
-import { Cookie, createSessionCookie  } from 'simplycookie-js'
+import { Cookie, createSessionCookie, findCookie, findCookieAttribute } from 'simplycookie-js'
 import { v4 as uuidv4 } from 'uuid';
 import { authenticateCredentials } from './helpers/login.js'
 import crudDriver from './db/db.js'
@@ -92,7 +92,8 @@ server.post('/login', async (req: any, res: any) => {
          const value = uuidv4()//sessionId
          const domain = 'localhost'
          var cookie:Cookie = createSessionCookie(name, value, domain)
-         res.headers['Set-Cookie'] = cookie.getCookieStr()
+         printFormatted('yellow', 'session cookie:',cookie.getCookieStr())
+         res.setHeader('Set-Cookie',cookie.getCookieStr())
          res.send({res:true, message:'User credentials were valid'})
       }
       else
@@ -101,7 +102,65 @@ server.post('/login', async (req: any, res: any) => {
       }
    } catch (error) 
    {
+      res.send({res:false, message:'Problem logging in:'+error})
       printFormatted('red', error)
+   }
+   
+})
+
+
+
+//Note res true means that the action of
+//the server was succesfully carried out
+/*
+ * - login
+ * - logout
+ * - signup
+ */
+server.post('/login-session-cookie', async (req: any, res: any) => {
+   printFormatted('blue', 'response handler for "/login-session-cookie" called')
+   var allCookiesStr = req.headers.cookie
+   var asArr = false
+   //find the cookie out all all cookies
+   var cookieStr = findCookie(allCookiesStr, 'memoir-session', asArr) as string
+   printFormatted('yellow', 'cookieStr:',cookieStr)
+   //obtain the session id
+   var [sessionId, cookieObj] = findCookieAttribute(cookieStr,'memoir-session')
+
+   if (cookieStr != '') 
+   {
+      //authorise user to access application
+      var user = await db.findUserBySessionId(sessionId)
+      try 
+      {
+         var valid =  await authenticateCredentials(user?.username, user?.password)
+         //if valid return new auth cookie
+         if (valid) 
+         {
+            //set new session cookie
+            const name = 'memoir-session'
+            const value = uuidv4()//sessionId
+            const domain = 'localhost'
+            var cookie:Cookie = createSessionCookie(name, value, domain)
+            printFormatted('yellow', 'session cookie:',cookie.getCookieStr())
+            res.setHeader('Set-Cookie',cookie.getCookieStr())
+
+            //update session id
+            const data = { sessionId: value }
+            db.updateUserByUsername(user?.username, data)
+
+            //send response
+            res.send({res:true, message:'User credentials were valid. User session ID updated.'})
+         }
+         else
+         {
+            res.send({res:false, message:'User credentials were invalid.'})
+         }
+      } catch (error) 
+      {
+         res.send({res:false, message:'Problem logging in:'+error})
+         printFormatted('red', error)
+      }
    }
    
 })
@@ -113,6 +172,7 @@ server.get('/logout', async (req:any, res:any) => {
    const name = 'memoir-session'
    const domain = 'localhost'
    var cookie:Cookie = createSessionCookie(name, null, domain)
+   printFormatted('yellow', 'session cookie:',cookie.getCookieStr())
    //set in header
    res.headers['Set-Cookie'] = cookie.getCookieStr()
    //and return to client wiht res true
@@ -132,11 +192,11 @@ server.post('/sign-up', async (req:any, res:any) => {
    //print request body parameters
    printFormatted('yellow', 
    'name:',name,'\n',
-   'email',email,'\n',
-   'password1', password1,'\n',
-   'password2', password2,'\n',
-   'username', username,'\n',
-   'sessionId', sessionId
+   'email:',email,'\n',
+   'password1:', password1,'\n',
+   'password2:', password2,'\n',
+   'username:', username,'\n',
+   'sessionId:', sessionId
    )
 
 

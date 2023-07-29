@@ -3,18 +3,33 @@
 // import { useAuthenticationStore } from '@/stores/isAuthenticated';
 import { fetchCSRFToken } from '@/helpers/headscript/headscript-helper'
 import { useRouter, type Router } from 'vue-router'
+import { findCookie, findCookieAttribute } from 'simplycookie-js'
 fetchCSRFToken()
+
+//check whether there is already a session cookie
+function checkForSessionCookie()
+{
+    const asArray = false
+    var cookieStr:string = findCookie(document.cookie, 'memoir-session', asArray) as string
+    // var [sessionId, cookie] = findCookieAttribute(cookieStr, 'memoir-session')
+
+    if(cookieStr)
+    {
+        
+    }
+}
+
 var url = '/api/login'
 var router = useRouter()
 const queryString = window.location.search
 const urlParams = new URLSearchParams(queryString)
 const logoutSuccessful = urlParams.get('logout')
+
 //alert if logout is successful
 if (logoutSuccessful)
 {
     alert("Logout was successful")
 }
-
 async function login()
 {
     var username = (document.querySelector('#username') as HTMLInputElement).value
@@ -26,7 +41,7 @@ async function login()
     var data = { username, password }
 
     
-    const response = fetch(url,{
+    const resData = fetch(url,{
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         mode: "cors", // no-cors, *cors, same-origin
         cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -43,7 +58,21 @@ async function login()
     })
 
     //display response text
-    alert((await response).text())
+    //@ts-ignore
+    var response = await resData
+    var resJson = await response.json();
+    if (resJson.res == true)
+    {
+        alert('Login successful:'+resJson.message)
+        window.location.href = '/scrapbook'
+    }
+    else 
+    {
+        alert('Login unsuccessful:'+resJson.message)
+        var form = document.querySelector('#login-form') as HTMLFormElement
+        //clear all form values
+        form.reset()
+    }
 }
     
 </script>
@@ -54,7 +83,7 @@ async function login()
 <template>
 
     <div id="form-container" class="container form-control form-size">
-        <form id="sign-up-form" class="form" action="#">
+        <form id="login-form" class="form" action="#">
             <label for="username">Username</label>
             <input id="username" type="username" name="username" class="form-control"/>
             

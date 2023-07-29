@@ -34,3 +34,7 @@ By setting mongodb to allow your ip address or all ip addresses to connect to yo
 <a href="/sign-up">
     <button id="btn-sign-up" class="btn btn-warning form-control">Sign Up</button>
 </a>
+
+
+## Note about cookies:document.cookie
+`document.cookie` returns all cookies (at least the ones that are visible to javascript). With cookies, Each cookie is separated by a comma `,` and each attribute is separated by a semicolon `;`

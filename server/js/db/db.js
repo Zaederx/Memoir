@@ -24,19 +24,25 @@ class DbUserCrudDriver {
     async addUser(name, username, password, email, sessionId) {
         printFormatted('blue', 'function addUser called');
         printFormatted('yellow', 'name:', name, '\n', 'username:', username, '\n', 'password:', password, '\n', 'email:', email, '\n', 'sessionId:', sessionId);
+        var successful;
+        var passwordHash = await bcrypt.hash(password, 8);
         const collection = 'users';
         const data = {
             name: name,
             username: username,
-            password: await bcrypt.hash(password, 8),
+            password: passwordHash,
             email: email,
             sessionId: sessionId ? sessionId : '',
         };
         try {
             await this.addData(collection, data);
+            successful = true;
+            return successful;
         }
         catch (error) {
             printFormatted('red', error);
+            successful = false;
+            return successful;
         }
     }
     /**

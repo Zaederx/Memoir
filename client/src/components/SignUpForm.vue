@@ -1,23 +1,24 @@
 <script setup lang=ts>
 import { fetchCSRFToken } from '@/helpers/headscript/headscript-helper'
+import { printFormatted } from 'printformatted-js'
+fetchCSRFToken()
 
-
-async function signUp()
+async function signUp(e:Event)
 {
-    await fetchCSRFToken()
+    e.preventDefault()// to stop the form from being submitted
     const username = (document.querySelector('#username') as HTMLInputElement).value
     const email = (document.querySelector('#email') as HTMLInputElement).value
     const name = (document.querySelector('#name') as HTMLInputElement).value
-    const p1 = (document.querySelector('#p1') as HTMLInputElement).value
-    const p2 = (document.querySelector('#p2') as HTMLInputElement).value
+    const password1 = (document.querySelector('#password1') as HTMLInputElement).value
+    const password2 = (document.querySelector('#password2') as HTMLInputElement).value
 
     var csrfMetaTag = document.querySelector('#csrf-token') as HTMLMetaElement
     const csrfToken = csrfMetaTag.content
 
-    const data = { username, email, name, p1, p2 }
+    const data = { username, email, name, password1, password2 }
 
     const url = '/api/sign-up'
-    var response = await fetch(url, {
+    fetch(url, {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         mode: "cors", // no-cors, *cors, same-origin
         cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -25,15 +26,22 @@ async function signUp()
         headers: {
         "CSRF-TOKEN":csrfToken,
         "Content-Type":"application/json"
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-
         },
         redirect: "follow", //manual, *follow, error
         referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         body: JSON.stringify(data), // body data type must match "Content-Type" header
+        
     })
+    .then(async (response:Response) => 
+    {
+        //print alert message to screen
+        alert((await response.json()).message)
+        //change page
+        window.location.href = '/scrapbook'
+    })
+    .catch((error)=> { printFormatted('red', error) })
 
-    alert(await response.text())
+    
 }
 </script>
 <template>
@@ -46,10 +54,10 @@ async function signUp()
             <label for="name">Name</label>
             <input id="name" type="text" name="name" class="form-control"/>
             <label for="password">Password</label>
-            <input id="p1" type="password" name="password1" class="form-control"/>
+            <input id="password1" type="password" name="password1" class="form-control"/>
 
             <label for="password">Re-enter Password</label>
-            <input id="p2" type="password" name="password2" class="form-control"/>
+            <input id="password2" type="password" name="password2" class="form-control"/>
 
             <button id="btn-sign-up" class="btn btn-primary form-control" @click=signUp>Sign Up</button>
             <button id="btn-login" class="btn btn-warning form-control">Login</button>

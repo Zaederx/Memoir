@@ -20,6 +20,11 @@ class DbUserCrudDriver {
     //fetch database
     this.database = this.client.db(this.dbClusterName)
   }
+
+
+
+  //CREATE
+
   /**
    * Persists / saves user to mongo db
    * @param name name of the user
@@ -31,25 +36,62 @@ class DbUserCrudDriver {
   async addUser(name:string, username:string, password:string, email:string, sessionId?:string) {
     printFormatted('blue', 'function addUser called')
     printFormatted('yellow', 'name:',name,'\n','username:',username, '\n','password:',password, '\n','email:', email, '\n','sessionId:',sessionId)
+    var successful:boolean
+    var passwordHash = await bcrypt.hash(password,8)
     const collection = 'users'
     const data = 
     {
       name:name,
       username:username,
-      password: await bcrypt.hash(password,8),
+      password:passwordHash,
       email:email,
-      sessionId: sessionId ? sessionId : '',
+      sessionId:sessionId ? sessionId : '',
     }
     try 
     {
       await this.addData(collection, data)
+      successful = true
+      return successful
     } catch (error) 
     {
       printFormatted('red', error)
+      successful = false
+      return successful
     }
     
   }
 
+
+  /**
+   * 
+   * @param collection mongo db collection
+   * @param data data to be added to the collection
+   */
+  async addData(collection:string, data:Object)
+  {
+    //find the right collection / column
+    var col = this.database.collection(collection)
+    //insert new data
+    try 
+    {
+      const result = await col.insertOne(data)
+      if(result && result.acknowledged) 
+      {
+        console.log(`added ${collection} succesfully`)
+      }
+      else
+      {
+        throw new Error(`Problem adding collection '${collection}' with data '${data}' to database` )
+      }
+    }
+    catch (e)
+    {
+      printFormatted('red', e)
+    }
+    
+  }
+
+  //READ
   /**
    * Finds a user by their username.
    * Functions returns a user.
@@ -87,6 +129,11 @@ class DbUserCrudDriver {
       }
   }
 
+  /**
+   * 
+   * @param sessionId sessionId as a string
+   * @return user
+   */
   async findUserBySessionId(sessionId: string)
   {
     try
@@ -110,34 +157,29 @@ class DbUserCrudDriver {
     
   }
 
+  //Update
   /**
+   * Updates the user data using their username.
+   * @param username username
+   * @param data data to be updated in key value pairs 
    * 
-   * @param collection mongo db collection
-   * @param data data to be added to the collection
+   * i.e. { sessionId : ${sessionId} }
    */
-  async addData(collection:string, data:Object)
+  async updateUserByUsername(username:string, data:Object)
   {
-    //find the right collection / column
-    var col = this.database.collection(collection)
-    //insert new data
     try 
     {
-      const result = await col.insertOne(data)
-      if(result && result.acknowledged) 
-      {
-        console.log(`added ${collection} succesfully`)
-      }
-      else
-      {
-        throw new Error(`Problem adding collection '${collection}' with data '${data}' to database` )
-      }
-    }
-    catch (e)
+      const collection = 'users'
+      var users = this.database.collection(collection)
+      var query = {username: username}
+      var result = users.updateOne(query, {$set:data, $currentDate:{lastUpdated:true}})
+    } 
+    catch (error) 
     {
-      printFormatted('red', e)
+      printFormatted('red',error)
     }
-    
   }
+
 
 
   /**
@@ -180,6 +222,8 @@ class DbUserCrudDriver {
     var result = await this.deleteUser(query)
     return result
   }
+
+
 }
 
 export default DbUserCrudDriver

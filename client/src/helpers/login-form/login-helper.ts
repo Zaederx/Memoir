@@ -77,7 +77,7 @@ export async function loginViaSessionCookie(url:string='/api/login-session-cooki
 
     console.log('loginViaSessionCookie called')
     var token = {csrfToken:''}
-    var responseObj = {isAuthenticated:false}
+    
     token.csrfToken = $("meta[name='csrf-token']").attr("content") as string;
     if(token.csrfToken == null || token.csrfToken == undefined) {
 
@@ -86,9 +86,9 @@ export async function loginViaSessionCookie(url:string='/api/login-session-cooki
     console.log('Attempting to login')
     console.log(`document.cookie: ${document.cookie}`)
     console.log(`token.csrfToken: ${token.csrfToken}`)
-    var email = $("#email").val() as string
+    var username = $("#username").val() as string
     var password = $("#password").val() as string
-    var data = {email:email, password:password}
+    var data = {username:username, password:password}
     // var cookie = getAppCookie(cookieName,cookieValue)
 
     const response = await fetch(url,{
@@ -106,7 +106,8 @@ export async function loginViaSessionCookie(url:string='/api/login-session-cooki
 
     const authenticated = true
     //set authentication value in the sessionStorage
-    sessionStorage.setItem('auth', JSON.stringify({isAuthenticated:response.ok}))
+    var responseObj = {isAuthenticated:response.ok}
+    sessionStorage.setItem('auth', JSON.stringify(responseObj))
     authStore.checkAuth()//authenticate or unauthenticate based on response
     if(response.ok == authenticated)
     {
