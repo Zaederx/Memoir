@@ -11,7 +11,7 @@ import crudDriver from './db/db.js'
 // import * as url from 'url';
 //@ts-ignore
 import path from 'path'
-import { printFormatted } from 'printformatted-js';
+import { printFormatted, printFormattedv2 } from 'printformatted-js';
 const server = express();
 
 // const __filename = url.fileURLToPath(import.meta.url);
@@ -85,7 +85,7 @@ server.post('/login', async (req: any, res: any) => {
    try 
    {
       var valid =  await authenticateCredentials(username, password)
-      //if valid return auth cookie
+      //if valid return session cookie
       if (valid) 
       {
          const name = 'memoir-session'
@@ -94,6 +94,8 @@ server.post('/login', async (req: any, res: any) => {
          var cookie:Cookie = createSessionCookie(name, value, domain)
          printFormatted('yellow', 'session cookie:',cookie.getCookieStr())
          res.setHeader('Set-Cookie',cookie.getCookieStr())
+         //update user session id
+         db.updateUserByUsername(username, {sessionId:value})
          res.send({res:true, message:'User credentials were valid'})
       }
       else
@@ -108,7 +110,23 @@ server.post('/login', async (req: any, res: any) => {
    
 })
 
-
+/**
+ * Returns a session id from the session cookie
+ * on the request object
+ * @param req the express request object
+ */
+function getSessionIdFromReq(req:any)
+{
+   var allCookiesStr = req.headers.cookie
+   var asArr = false
+   //find the cookie out all all cookies
+   printFormattedv2(true, false, 'yellow', allCookiesStr)
+   var cookieStr = findCookie(allCookiesStr, 'memoir-session', asArr) as string
+   printFormatted('yellow', 'cookieStr:',cookieStr)
+   //obtain the session id
+   var [sessionId, cookieObj] = findCookieAttribute(cookieStr,'memoir-session')
+   return sessionId
+}
 
 //Note res true means that the action of
 //the server was succesfully carried out
@@ -119,15 +137,11 @@ server.post('/login', async (req: any, res: any) => {
  */
 server.post('/login-session-cookie', async (req: any, res: any) => {
    printFormatted('blue', 'response handler for "/login-session-cookie" called')
-   var allCookiesStr = req.headers.cookie
-   var asArr = false
-   //find the cookie out all all cookies
-   var cookieStr = findCookie(allCookiesStr, 'memoir-session', asArr) as string
-   printFormatted('yellow', 'cookieStr:',cookieStr)
-   //obtain the session id
-   var [sessionId, cookieObj] = findCookieAttribute(cookieStr,'memoir-session')
 
-   if (cookieStr != '') 
+   var sessionId = getSessionIdFromReq(req)
+   printFormattedv2(false,false,'yellow', 'sessionId',sessionId)
+
+   if (sessionId != '') 
    {
       //authorise user to access application
       var user = await db.findUserBySessionId(sessionId)
@@ -168,15 +182,27 @@ server.post('/login-session-cookie', async (req: any, res: any) => {
 
 server.get('/logout', async (req:any, res:any) => {
    printFormatted('blue', 'response handler "/logout" called')
-   //set session cookie to null
-   const name = 'memoir-session'
-   const domain = 'localhost'
-   var cookie:Cookie = createSessionCookie(name, null, domain)
-   printFormatted('yellow', 'session cookie:',cookie.getCookieStr())
-   //set in header
-   res.headers['Set-Cookie'] = cookie.getCookieStr()
-   //and return to client wiht res true
-   res.send({res:true})
+   try 
+   {
+      //set session cookie to null
+      const name = 'memoir-session'
+      const domain = 'localhost'
+      var cookie:Cookie = createSessionCookie(name, null, domain)
+      printFormatted('yellow', 'session cookie:',cookie.getCookieStr())
+      //set in header
+      res.setHeader('Set-Cookie',cookie.getCookieStr())
+      //update session id
+      const data = { sessionId: null }
+      const currentSessionId = getSessionIdFromReq(req)
+      db.updateUserBySessionId(currentSessionId, data)
+      //and return to client wiht res true
+      res.send({res:true})
+   }
+   catch (error)
+   {
+      printFormattedv2(true,true,'red', 'Problem logging out:', error)
+   }
+   
 })
 
 server.post('/sign-up', async (req:any, res:any) => {

@@ -115,10 +115,3 @@ function ignoreNonScrapbookElements(element: HTMLElement):boolean
     if(valid) { return include}
     else { return ignore }
 }
-
-
-export async function printScrapbook()
-{
-    var printer = new Printer('#scrapbook');
-    printer.print()
-}

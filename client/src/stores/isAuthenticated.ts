@@ -17,7 +17,7 @@ export const useAuthenticationStore = defineStore('isAuthenticated', ()=> {
     
     //save auth default value ( { isAuthenticated: false}) to localStorage
     watch(auth,(authVal) => {
-        console.log('setting auth in localStorage')
+        console.log('setting auth in localStorage:',authVal)
         sessionStorage.setItem('auth', JSON.stringify(authVal)),
         {deep:true}
     })

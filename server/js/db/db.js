@@ -13,6 +13,7 @@ class DbUserCrudDriver {
         //fetch database
         this.database = this.client.db(this.dbClusterName);
     }
+    //CREATE
     /**
      * Persists / saves user to mongo db
      * @param name name of the user
@@ -46,6 +47,29 @@ class DbUserCrudDriver {
         }
     }
     /**
+     *
+     * @param collection mongo db collection
+     * @param data data to be added to the collection
+     */
+    async addData(collection, data) {
+        //find the right collection / column
+        var col = this.database.collection(collection);
+        //insert new data
+        try {
+            const result = await col.insertOne(data);
+            if (result && result.acknowledged) {
+                console.log(`added ${collection} succesfully`);
+            }
+            else {
+                throw new Error(`Problem adding collection '${collection}' with data '${data}' to database`);
+            }
+        }
+        catch (e) {
+            printFormatted('red', e);
+        }
+    }
+    //READ
+    /**
      * Finds a user by their username.
      * Functions returns a user.
      * @param username username of user to be found
@@ -74,6 +98,11 @@ class DbUserCrudDriver {
             printFormatted('red', 'username is blank or undefined');
         }
     }
+    /**
+     *
+     * @param sessionId sessionId as a string
+     * @return user
+     */
     async findUserBySessionId(sessionId) {
         try {
             const collection = 'users';
@@ -89,26 +118,41 @@ class DbUserCrudDriver {
             console.log(e);
         }
     }
+    //Update
     /**
+     * Updates the user data using their username.
+     * @param username username
+     * @param data data to be updated in key value pairs
      *
-     * @param collection mongo db collection
-     * @param data data to be added to the collection
+     * i.e. { sessionId : ${sessionId} }
      */
-    async addData(collection, data) {
-        //find the right collection / column
-        var col = this.database.collection(collection);
-        //insert new data
+    async updateUserByUsername(username, data) {
         try {
-            const result = await col.insertOne(data);
-            if (result && result.acknowledged) {
-                console.log(`added ${collection} succesfully`);
-            }
-            else {
-                throw new Error(`Problem adding collection '${collection}' with data '${data}' to database`);
-            }
+            const collection = 'users';
+            var users = this.database.collection(collection);
+            var query = { username: username };
+            var result = users.updateOne(query, { $set: data, $currentDate: { lastUpdated: true } });
         }
-        catch (e) {
-            printFormatted('red', e);
+        catch (error) {
+            printFormatted('red', error);
+        }
+    }
+    /**
+     * Updates the user data using their username.
+     * @param username username
+     * @param data data to be updated in key value pairs
+     *
+     * i.e. { sessionId : ${sessionId} }
+     */
+    async updateUserBySessionId(sessionId, data) {
+        try {
+            const collection = 'users';
+            var users = this.database.collection(collection);
+            var query = { sessionId: sessionId };
+            var result = users.updateOne(query, { $set: data, $currentDate: { lastUpdated: true } });
+        }
+        catch (error) {
+            printFormatted('red', error);
         }
     }
     /**

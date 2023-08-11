@@ -4,23 +4,21 @@
 import { fetchCSRFToken } from '@/helpers/headscript/headscript-helper'
 import { useRouter, type Router } from 'vue-router'
 import { findCookie, findCookieAttribute } from 'simplycookie-js'
-fetchCSRFToken()
+import { checkForSessionCookie, loginViaSessionCookie } from '@/helpers/login-form/login-helper'
+import { useAuthenticationStore } from '@/stores/isAuthenticated'
+import { printFormattedv2 } from 'printformatted-js'
 
-//check whether there is already a session cookie
-function checkForSessionCookie()
-{
-    const asArray = false
-    var cookieStr:string = findCookie(document.cookie, 'memoir-session', asArray) as string
-    // var [sessionId, cookie] = findCookieAttribute(cookieStr, 'memoir-session')
 
-    if(cookieStr)
-    {
-        
-    }
-}
+const urlSessionCookie = '/api/login-session-cookie'
+var router:Router = useRouter()
+var authStore = useAuthenticationStore()
+fetchCSRFToken().then(()=> {
+    loginViaSessionCookie(urlSessionCookie,router,authStore)
+})
 
-var url = '/api/login'
-var router = useRouter()
+
+
+var urlLogin = '/api/login'
 const queryString = window.location.search
 const urlParams = new URLSearchParams(queryString)
 const logoutSuccessful = urlParams.get('logout')
@@ -39,9 +37,8 @@ async function login()
     const csrfToken = csrfMetaTag.content
 
     var data = { username, password }
-
     
-    const resData = fetch(url,{
+    const resData = fetch(urlLogin,{
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         mode: "cors", // no-cors, *cors, same-origin
         cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -64,7 +61,7 @@ async function login()
     if (resJson.res == true)
     {
         alert('Login successful:'+resJson.message)
-        window.location.href = '/scrapbook'
+        router.push('/scrapbook')
     }
     else 
     {
@@ -89,8 +86,6 @@ async function login()
             
             <label for="password">Password</label>
             <input id="password" type="password" name="password" class="form-control"/>
-
-            
         </form>
         <!-- <button id="btn-login" class="btn btn-primary form-control" @click="loginViaEmailPassword(url,$router)">Login</button> -->
         <br>

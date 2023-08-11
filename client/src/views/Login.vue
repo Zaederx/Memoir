@@ -7,9 +7,9 @@
    <HeadScripts></HeadScripts>
    <Banner heading1="Chat" heading2="Login View"></Banner>
    <HomeMain>
-   <!-- <Suspense> -->
+   <Suspense>
       <LoginForm></LoginForm>
-   <!-- </Suspense> -->
+   </Suspense>
     
    </HomeMain>
    <SiteFooter></SiteFooter>

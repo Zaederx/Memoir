@@ -38,3 +38,20 @@ By setting mongodb to allow your ip address or all ip addresses to connect to yo
 
 ## Note about cookies:document.cookie
 `document.cookie` returns all cookies (at least the ones that are visible to javascript). With cookies, Each cookie is separated by a comma `,` and each attribute is separated by a semicolon `;`
+
+## Function.prototype.caller - deprecated - use console.trace instead
+The closest thing to Function.caller is console.trace
+Instead of:
+```
+function myFunc()
+{
+    console.log(myFunc.caller)
+}
+```
+use the closest thing which is:
+```
+function myFunc()
+{
+    console.trace()//gives the full stack trace (not just the previous caller)
+}
+```

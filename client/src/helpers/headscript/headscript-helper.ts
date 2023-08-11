@@ -1,9 +1,11 @@
+import { printFormattedv2 } from "printformatted-js"
 
 /**
- * Fetch CSRF Token
+ * Fetch CSRF Token and appends in a meta tag
  */
 export async function fetchCSRFToken() 
 {
+    printFormattedv2(false, false, 'yellow', 'function fetchCSRFToken called' )
     const proxyUrl = '/api/csrf-token'
     try {
         //fetch csrf token from server

@@ -4,6 +4,7 @@ import { makeCollapsibleSideways, addCssStyling, collapsibleCssSideways } from '
 import { closePictureMenu, getImages, openPictureMenu, removeImgFromScrapbook, printScrapbook } from '@/helpers/uploadForm/upload-form'
 import { Printer } from 'simplyprint-js'
 import printCss from '../assets/print.css'
+
 onMounted(() => 
 {
     const width = 300
@@ -27,11 +28,11 @@ onMounted(() =>
     const btnRemoveImg = document.querySelector('#btn-remove-pictures') as HTMLButtonElement
     btnRemoveImg.onclick = () => removeImgFromScrapbook()
 
-    //enable print button
+   //enable print button
     const btnPrint = document.querySelector('#btn-print') as HTMLDivElement
-    btnPrint.onclick = () => printScrapbook()
-
+    btnPrint.onclick = printScrapbook
 })
+ 
 </script>
 
 <template>

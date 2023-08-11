@@ -180,6 +180,28 @@ class DbUserCrudDriver {
     }
   }
 
+  /**
+   * Updates the user data using their username.
+   * @param username username
+   * @param data data to be updated in key value pairs 
+   * 
+   * i.e. { sessionId : ${sessionId} }
+   */
+  async updateUserBySessionId(sessionId:string, data:Object)
+  {
+    try 
+    {
+      const collection = 'users'
+      var users = this.database.collection(collection)
+      var query = {sessionId: sessionId}
+      var result = users.updateOne(query, {$set:data, $currentDate:{lastUpdated:true}})
+    } 
+    catch (error) 
+    {
+      printFormatted('red',error)
+    }
+  }
+
 
 
   /**

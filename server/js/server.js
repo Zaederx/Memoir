@@ -4,14 +4,14 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import csrf from 'csurf';
 import { config as dotEnvConfig } from 'dotenv';
-import { createSessionCookie } from 'simplycookie-js';
+import { createSessionCookie, findCookie, findCookieAttribute } from 'simplycookie-js';
 import { v4 as uuidv4 } from 'uuid';
 import { authenticateCredentials } from './helpers/login.js';
 import crudDriver from './db/db.js';
 // import * as url from 'url';
 //@ts-ignore
 import path from 'path';
-import { printFormatted } from 'printformatted-js';
+import { printFormatted, printFormattedv2 } from 'printformatted-js';
 const server = express();
 // const __filename = url.fileURLToPath(import.meta.url);
 // const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
@@ -70,7 +70,7 @@ server.post('/login', async (req, res) => {
     printFormatted('yellow', 'username:', username, '\npassword:', password);
     try {
         var valid = await authenticateCredentials(username, password);
-        //if valid return auth cookie
+        //if valid return session cookie
         if (valid) {
             const name = 'memoir-session';
             const value = uuidv4(); //sessionId
@@ -78,6 +78,8 @@ server.post('/login', async (req, res) => {
             var cookie = createSessionCookie(name, value, domain);
             printFormatted('yellow', 'session cookie:', cookie.getCookieStr());
             res.setHeader('Set-Cookie', cookie.getCookieStr());
+            //update user session id
+            db.updateUserByUsername(username, { sessionId: value });
             res.send({ res: true, message: 'User credentials were valid' });
         }
         else {
@@ -89,17 +91,83 @@ server.post('/login', async (req, res) => {
         printFormatted('red', error);
     }
 });
+/**
+ * Returns a session id from the session cookie
+ * on the request object
+ * @param req the express request object
+ */
+function getSessionIdFromReq(req) {
+    var allCookiesStr = req.headers.cookie;
+    var asArr = false;
+    //find the cookie out all all cookies
+    printFormattedv2(true, false, 'yellow', allCookiesStr);
+    var cookieStr = findCookie(allCookiesStr, 'memoir-session', asArr);
+    printFormatted('yellow', 'cookieStr:', cookieStr);
+    //obtain the session id
+    var [sessionId, cookieObj] = findCookieAttribute(cookieStr, 'memoir-session');
+    return sessionId;
+}
+//Note res true means that the action of
+//the server was succesfully carried out
+/*
+ * - login
+ * - logout
+ * - signup
+ */
+server.post('/login-session-cookie', async (req, res) => {
+    printFormatted('blue', 'response handler for "/login-session-cookie" called');
+    var sessionId = getSessionIdFromReq(req);
+    printFormattedv2(false, false, 'yellow', 'sessionId', sessionId);
+    if (sessionId != '') {
+        //authorise user to access application
+        var user = await db.findUserBySessionId(sessionId);
+        try {
+            var valid = await authenticateCredentials(user?.username, user?.password);
+            //if valid return new auth cookie
+            if (valid) {
+                //set new session cookie
+                const name = 'memoir-session';
+                const value = uuidv4(); //sessionId
+                const domain = 'localhost';
+                var cookie = createSessionCookie(name, value, domain);
+                printFormatted('yellow', 'session cookie:', cookie.getCookieStr());
+                res.setHeader('Set-Cookie', cookie.getCookieStr());
+                //update session id
+                const data = { sessionId: value };
+                db.updateUserByUsername(user?.username, data);
+                //send response
+                res.send({ res: true, message: 'User credentials were valid. User session ID updated.' });
+            }
+            else {
+                res.send({ res: false, message: 'User credentials were invalid.' });
+            }
+        }
+        catch (error) {
+            res.send({ res: false, message: 'Problem logging in:' + error });
+            printFormatted('red', error);
+        }
+    }
+});
 server.get('/logout', async (req, res) => {
     printFormatted('blue', 'response handler "/logout" called');
-    //set session cookie to null
-    const name = 'memoir-session';
-    const domain = 'localhost';
-    var cookie = createSessionCookie(name, null, domain);
-    printFormatted('yellow', 'session cookie:', cookie.getCookieStr());
-    //set in header
-    res.headers['Set-Cookie'] = cookie.getCookieStr();
-    //and return to client wiht res true
-    res.send({ res: true });
+    try {
+        //set session cookie to null
+        const name = 'memoir-session';
+        const domain = 'localhost';
+        var cookie = createSessionCookie(name, null, domain);
+        printFormatted('yellow', 'session cookie:', cookie.getCookieStr());
+        //set in header
+        res.setHeader('Set-Cookie', cookie.getCookieStr());
+        //update session id
+        const data = { sessionId: null };
+        const currentSessionId = getSessionIdFromReq(req);
+        db.updateUserBySessionId(currentSessionId, data);
+        //and return to client wiht res true
+        res.send({ res: true });
+    }
+    catch (error) {
+        printFormattedv2(true, true, 'red', 'Problem logging out:', error);
+    }
 });
 server.post('/sign-up', async (req, res) => {
     printFormatted('blue', 'response handler "/sign-up" called');

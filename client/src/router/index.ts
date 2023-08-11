@@ -9,7 +9,7 @@ import HomeMain from '@/components/HomeMain.vue'
 import SiteFooter from '@/components/SiteFooter.vue'
 import Banner from '@/components/Banner.vue'
 import UploadForm from '@/components/UploadForm.vue'
-
+import { useAuthenticationStore }  from '@/stores/isAuthenticated'
 import SignUp from '@/views/SignUp.vue'
 import Login from '@/views/Login.vue'
 
@@ -45,6 +45,9 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: routes
 })
+
+
+
 
 // How to use lazy loading in vue
 // {

@@ -9,6 +9,7 @@
       "@/*": ["./src/*"]
     },
     "jsx": "preserve",
-    "types": ["jquery"]
+    "types": ["jquery"],
+    "strict": false
   }
 }

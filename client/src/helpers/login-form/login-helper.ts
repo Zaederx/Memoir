@@ -2,7 +2,8 @@ import $ from 'jquery'
 import { messageToHTML } from '@/helpers/message-to-html.js';
 import type { Router } from 'vue-router'
 import type { Store } from 'pinia'
-
+import { findCookie, findCookieAttribute } from 'simplycookie-js';
+import { printFormattedv2 } from 'printformatted-js';
 
 /**
  * Attempts to log the user in via email and password.
@@ -12,8 +13,6 @@ import type { Store } from 'pinia'
  */
 export async function loginViaEmailPassword(url:string='/api/login', router:Router, authStore:Store<'isAuthenticated',any>)
 {
-
-    
     var token = {csrfToken:''}
     
     token.csrfToken = $("meta[name='csrf-token']").attr("content") as string;
@@ -24,9 +23,9 @@ export async function loginViaEmailPassword(url:string='/api/login', router:Rout
     console.log('Attempting to login')
     console.log(`document.cookie: ${document.cookie}`)
     console.log(`token.csrfToken: ${token.csrfToken}`)
-    var email = $("#email").val() as string
+    var username = $("#username").val() as string
     var password = $("#password").val() as string
-    var data = {email:email, password:password}
+    var data = {username:username, password:password}
     // var cookie = getAppCookie(cookieName,cookieValue)
 
     const response = await fetch(url,{
@@ -58,8 +57,6 @@ export async function loginViaEmailPassword(url:string='/api/login', router:Rout
         authStore.checkAuth()
         console.log('Log in unsuccessful')
     }
-
-
 }
 
 /**
@@ -74,53 +71,62 @@ export async function loginViaEmailPassword(url:string='/api/login', router:Rout
  */
 export async function loginViaSessionCookie(url:string='/api/login-session-cookie', router:Router, authStore:Store<'isAuthenticated',any>)
 {
-
-    console.log('loginViaSessionCookie called')
+    printFormattedv2(false,true,'yellow','loginViaSessionCookie called')
     var token = {csrfToken:''}
     
     token.csrfToken = $("meta[name='csrf-token']").attr("content") as string;
     if(token.csrfToken == null || token.csrfToken == undefined) {
 
     }
-    console.log(`Login Form setup script - csrfToken: ${token.csrfToken}`);
-    console.log('Attempting to login')
-    console.log(`document.cookie: ${document.cookie}`)
-    console.log(`token.csrfToken: ${token.csrfToken}`)
-    var username = $("#username").val() as string
-    var password = $("#password").val() as string
-    var data = {username:username, password:password}
+    //note to self - memoir session cookie is HTTPonly - not accessible from javascript - won't show up in document.cookie - but will be automatically sent in response
+    var data = {}
     // var cookie = getAppCookie(cookieName,cookieValue)
 
     const response = await fetch(url,{
         method: 'POST',
         mode:'cors',
-        credentials:'include',
+        // credentials:'include',
         headers: {
             'Content-Type':'application/json',
             'Access-Control-Allow-Origin':'http://localhost:3000',
             'CSRF-Token':token.csrfToken
         },
         redirect: 'error',
-        body: JSON.stringify(data),
+        // body: JSON.stringify(data),
     })
 
     const authenticated = true
     //set authentication value in the sessionStorage
     var responseObj = {isAuthenticated:response.ok}
     sessionStorage.setItem('auth', JSON.stringify(responseObj))
-    authStore.checkAuth()//authenticate or unauthenticate based on response
+
     if(response.ok == authenticated)
     {
+        alert('Login was successful')
         //rediect user to user home page
-        if (router.currentRoute.value.name == 'login')
+        if (router.currentRoute.value.name == 'Login')
         {
-            router.push('/user-home')
+            router.push('/scrapbook')
         }
+        authStore.set
     }
     else {
         const message = 'Login was unsuccessful'
-        const html = messageToHTML(message)
-        $('#errors').html(html)
+        alert(message)
     }
     
+}
+
+
+/**
+ * check whether there is already a session cookie
+ */
+export function checkForSessionCookie()
+{
+    const asArray = false
+    printFormattedv2(false, false, 'yellow', 'all js accessible cookies', document.cookie)
+    var cookieStr:string = findCookie(document.cookie, 'memoir-session', asArray) as string
+    // var [sessionId, cookie] = findCookieAttribute(cookieStr, 'memoir-session')
+    if (cookieStr) {return true}
+    else {return false}
 }
