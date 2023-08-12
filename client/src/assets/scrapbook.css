@@ -75,10 +75,15 @@ body
 .draggable
 {
     background-size: 100% 100%;
-    background-color: green;
+    /* background-color: green; */
     background-image: url();
     position: absolute;
     width:100px;
     height:100px;
     /* don't add margin to this or it won't work */
+}
+
+.text
+{
+    background-color: rgb(202, 202, 202);
 }
