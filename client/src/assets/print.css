@@ -76,3 +76,7 @@
     /* don't add margin to this or it won't work */
 }
 
+.text
+{
+    background-color: rgb(202, 202, 202);
+}
