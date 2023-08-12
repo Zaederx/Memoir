@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { makeCollapsibleSideways, addCssStyling, collapsibleCssSideways } from 'simplycollapsible-js'
-import { closePictureMenu, getImages, openPictureMenu, removeImgFromScrapbook, printScrapbook } from '@/helpers/uploadForm/upload-form'
+import { closePictureMenu, getImages, openPictureMenu, removeElementFromScrapbook, printScrapbook, addTextToScrapbook } from '@/helpers/uploadForm/upload-form'
 import { Printer } from 'simplyprint-js'
 import printCss from '../assets/print.css'
 
@@ -16,6 +16,9 @@ onMounted(() =>
     const btnAddPictures = document.querySelector('#btn-add-pictures') as HTMLDivElement
     btnAddPictures.onclick = () => openPictureMenu()
 
+    const btnAddText = document.querySelector('#btn-add-text') as HTMLDivElement
+    btnAddText.onclick = () => addTextToScrapbook()
+
     //enable submit button
     const btnSubmit = document.querySelector('#btn-submit-images') as HTMLDivElement
     btnSubmit.onclick = () => getImages()
@@ -26,7 +29,7 @@ onMounted(() =>
 
     //enable remove image button
     const btnRemoveImg = document.querySelector('#btn-remove-pictures') as HTMLButtonElement
-    btnRemoveImg.onclick = () => removeImgFromScrapbook()
+    btnRemoveImg.onclick = () => removeElementFromScrapbook()
 
    //enable print button
     const btnPrint = document.querySelector('#btn-print') as HTMLDivElement
@@ -47,7 +50,8 @@ onMounted(() =>
                     <div id="menu-1">
                         <div class="cc-title">Menu</div>
                         <div id="btn-add-pictures" class="btn-custom">Add Pictures</div>
-                        <div id="btn-remove-pictures" class="btn-custom">Remove Picture</div>
+                        <div id="btn-add-text" class="btn-custom">Add Text</div>
+                        <div id="btn-remove-pictures" class="btn-custom">Remove Element</div>
                         <div id="btn-print" class="btn-custom">Print Scrapbook</div>
                     </div>
                     <div id="menu-2" style="display:none">
