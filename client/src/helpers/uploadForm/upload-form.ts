@@ -1,5 +1,5 @@
-import { useCurrentElementStore } from "@/stores/currentImg.js"
-import { makeScrapbookImagesMovable } from "../scrapbook/scrapbook.js"
+import { useCurrentElementStore } from "@/stores/currentElement.js"
+import { makeScrapbookElementsMovable } from "../scrapbook/scrapbook.js"
 import { Printer } from "simplyprint-js"
 import printCss from '../../assets/print.css'
 import { printFormattedv2 } from "printformatted-js"
@@ -63,7 +63,7 @@ export function addFileToScrapbook(file:File)
     var scrapbook = document.querySelector('#scrapbook-bg') as HTMLDivElement
     scrapbook.append(spanImg)
     //reapply makeScrapbookImagesMovable function
-    makeScrapbookImagesMovable()
+    makeScrapbookElementsMovable()
 }
 
 
@@ -86,11 +86,11 @@ export function fileToScrapbookImg(file:File):HTMLImageElement
     {
         var imgStore = useCurrentElementStore()
         //set the current image's url in store
-        imgStore.setCurrentImg(img)
+        imgStore.setCurrentElement(img)
     }
-    //add draggable and rotatible classes
+    //add draggable and rotatable classes
     img.classList.add('draggable')
-    img.classList.add('rotatible')
+    img.classList.add('rotatable')
     img.classList.add('resizeable')
     return img
 }
@@ -100,29 +100,38 @@ export function fileToScrapbookImg(file:File):HTMLImageElement
  * Removes the image from
  * @param currentImgSrc img source url
  */
-export function removeImgFromScrapbook()
+export function removeElementFromScrapbook()
 {
     console.log('removeImageFromScrapbook called')
-    var imgStore = useCurrentElementStore()
-    var img = imgStore.getCurrentImg()
+    var elemStore = useCurrentElementStore()
+    var img = elemStore.getCurrentElement()
     img?.remove()
 }
 
 
 export function addTextToScrapbook()
 {
-    var scrapbook = document.querySelector('#scrapbook-bg') as HTMLElement
+    //create text element and add css   
     var text = document.createElement('p') as HTMLParagraphElement
     text.classList.add('draggable')
-    text.classList.add('rotatible')
+    text.classList.add('rotatable')
     text.classList.add('resizeable')
-
+    text.classList.add('text')//IMPORTANT add a class for 
+    //allow text element to be selected on click
     text.onclick = () =>
     {
-
+        //set as the current element
+        var elemStore = useCurrentElementStore();
+        elemStore.setCurrentElement(text)
     }
+    //add to scrapbook
+    var scrapbook = document.querySelector('#scrapbook-bg') as HTMLElement
     scrapbook.append(text)
+    makeScrapbookElementsMovable()
 }
+
+
+
 
 export function printScrapbook()
 {
