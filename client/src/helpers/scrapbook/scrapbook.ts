@@ -2,10 +2,10 @@ import { makeDraggable, type options } from 'simplydrag-js'
 import { makeRotatable } from 'simplyrotate-js'
 import { Printer } from 'simplyprint-js';
 /**
- * Makes scrapbook images draggable or rotatible dependent on switch mode
+ * Makes scrapbook images draggable or rotatable dependent on switch mode
  * Now you can only drag or rotate while images are not resizeable
  */
-export function makeScrapbookImagesMovable()
+export function makeScrapbookElementsMovable()
 {
     var scrapbook = document.querySelector('#scrapbook') as HTMLElement
     const options = {dataAttributeName:'scrapbook', parentElement:scrapbook} as options
@@ -24,11 +24,11 @@ export function makeScrapbookImagesMovable()
             
             draggableArr.forEach((draggable) => makeDraggable(draggable as HTMLElement, options))
         }
-        //make images rotatible
+        //make images rotatable
         else
         {
-            var rotatibleArr = document.querySelectorAll('.rotatible')
-            rotatibleArr.forEach((r) => makeRotatable(r as HTMLElement))
+            var rotatableArr = document.querySelectorAll('.rotatable')
+            rotatableArr.forEach((r) => makeRotatable(r as HTMLElement))
         }
     }
 }
@@ -36,7 +36,7 @@ export function makeScrapbookImagesMovable()
 /**
  * Makes scrapbook images resizable depending on switch mode
  */
-export function makeScrapbookImagesResizable()
+export function makeScrapbookElementsResizable()
 {
  
     //get the resizeSwitch
@@ -81,18 +81,21 @@ function makeNotResizable(element: HTMLElement)
     var dragRotateSwitch = document.querySelector('#switch-drag-rotate') as HTMLInputElement
     element.style.resize = 'none'
     element.style.overflow = 'visible'//default setting
+
+    //check if drag rotate switch is false
+    //determines whether to make item draggable or rotatable after turning off resizing
     if (dragRotateSwitch.checked == false)
-        {
-            var scrapbook = document.querySelector('#scrapbook')
-            const options = {dataAttributeName:'scrapbook', parentElement:scrapbook} as options
-            var draggableArr = document.querySelectorAll(".draggable") ;
-            draggableArr.forEach((draggable)=> makeDraggable(draggable as HTMLElement, options))
-        }
-        else
-        {
-            var rotatibleArr = document.querySelectorAll('.rotatible')
-            rotatibleArr.forEach((r) => makeRotatable(r as HTMLElement))
-        }
+    {
+        var scrapbook = document.querySelector('#scrapbook')
+        const options = {dataAttributeName:'scrapbook', parentElement:scrapbook} as options
+        var draggableArr = document.querySelectorAll(".draggable") ;
+        draggableArr.forEach((draggable)=> makeDraggable(draggable as HTMLElement, options))
+    }
+    else
+    {
+        var rotatableArr = document.querySelectorAll('.rotatable')
+        rotatableArr.forEach((r) => makeRotatable(r as HTMLElement))
+    }
 }
 
 /**
@@ -114,4 +117,35 @@ function ignoreNonScrapbookElements(element: HTMLElement):boolean
     console.log(`valid:${valid}`)
     if(valid) { return include}
     else { return ignore }
+}
+
+
+/**
+ * Set each text box element to content editable
+ * (i.e. each <p> tag marked text )
+ */
+export function editText()
+{
+    var editSwitch = document.querySelector('#switch-editable-text') as HTMLInputElement
+    editSwitch.onchange = () => 
+    {
+        const textBoxes = document.querySelectorAll('.text')
+        if (editSwitch.checked)
+        {
+            textBoxes.forEach((textBox) => 
+            {
+
+                var text = textBox as HTMLParagraphElement
+                text.contentEditable = 'true'
+            })
+        }
+        else 
+        {
+            textBoxes.forEach((textBox) => 
+            {
+                var text = textBox as HTMLParagraphElement
+                text.contentEditable = 'false'
+            })
+        }
+    }
 }
