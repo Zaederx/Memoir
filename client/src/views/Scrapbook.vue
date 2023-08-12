@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { makeScrapbookImagesMovable, makeScrapbookImagesResizable } from '@/helpers/scrapbook/scrapbook.js'
+import { makeScrapbookElementsMovable,makeScrapbookElementsResizable, editText } from '@/helpers/scrapbook/scrapbook.js'
+
 
 onMounted(() => {
-    makeScrapbookImagesMovable()
-    makeScrapbookImagesResizable()
+    makeScrapbookElementsMovable()
+    makeScrapbookElementsResizable()
+    editText()
 })
 
 
@@ -31,6 +33,10 @@ onMounted(() => {
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="switch-fixed-resizeable">
                 <label class="form-check-label" for="flexSwitchCheckDefault">Fixed or Resizeable</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="switch-editable-text">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Not Editable | Editable </label>
             </div>
         </div>
         
