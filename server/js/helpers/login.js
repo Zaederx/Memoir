@@ -12,10 +12,15 @@ dotEnvConfig({ path: envFilePath });
 const password = process.env.DATABASE_PASSWORD;
 const uri = `mongodb+srv://memoir-cluster:${password}@memoir-cluster.g4ldqzg.mongodb.net/?retryWrites=true&w=majority`;
 //create a new 
-var db = new crudDriver(uri, 'memoir');
+var db_driver = new crudDriver(uri, 'memoir');
 export async function authenticateCredentials(username, password) {
     try {
-        var user = await db.findUserByUsername(username);
+        //open connection to db
+        db_driver.openConnection();
+        //find user
+        var user = await db_driver.findUserByUsername(username);
+        //close connection
+        db_driver.closeConnection();
         if (!user)
             throw new Error('No user found');
         printFormatted('yellow', 'user:', user);

@@ -55,3 +55,7 @@ function myFunc()
     console.trace()//gives the full stack trace (not just the previous caller)
 }
 ```
+
+
+## Checking if the db is connected - client.connect() (stackoverflow post)[https://stackoverflow.com/questions/39599063/check-if-mongodb-is-connected]
+At the link Dem specified (GitHub link)[https://github.com/mongodb/node-mongodb-native/blob/4.0/docs/CHANGES_4.0.0.md#removed-deprecations] it says that calling `connect` is a 'no-op' ('no operation' I believe) if you are already connected. So I think you can just call connect instead in most cases.

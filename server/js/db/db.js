@@ -186,5 +186,13 @@ class DbUserCrudDriver {
         var result = await this.deleteUser(query);
         return result;
     }
+    async openConnection() {
+        this.client.connect();
+        //fetch database
+        this.database = this.client.db(this.dbClusterName);
+    }
+    async closeConnection() {
+        this.client.close();
+    }
 }
 export default DbUserCrudDriver;

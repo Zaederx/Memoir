@@ -17,13 +17,19 @@ const uri = `mongodb+srv://memoir-cluster:${password}@memoir-cluster.g4ldqzg.mon
 
 
 //create a new 
-var db = new crudDriver(uri,'memoir')
+var db_driver = new crudDriver(uri,'memoir')
 
 export async function authenticateCredentials(username:string,password:string):Promise<boolean>
 {
    try
    {
-      var user =  await db.findUserByUsername(username)
+
+      //open connection to db
+      db_driver.openConnection()
+      //find user
+      var user =  await db_driver.findUserByUsername(username)
+      //close connection
+      db_driver.closeConnection()
       if (!user) throw new Error('No user found')
       printFormatted('yellow', 'user:',user)
       //if password match...

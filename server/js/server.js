@@ -6,8 +6,8 @@ import csrf from 'csurf';
 import { config as dotEnvConfig } from 'dotenv';
 import { createSessionCookie, findCookie, findCookieAttribute } from 'simplycookie-js';
 import { v4 as uuidv4 } from 'uuid';
-import { authenticateCredentials } from './helpers/login.js';
 import crudDriver from './db/db.js';
+import { authenticateCredentials } from './helpers/login.js';
 // import * as url from 'url';
 //@ts-ignore
 import path from 'path';
@@ -23,7 +23,7 @@ dotEnvConfig({ path: envFilePath });
 const PORT = process.env.PORT;
 const dbPassword = process.env.DATABASE_PASSWORD;
 const uri = `mongodb+srv://memoir-cluster:${dbPassword}@memoir-cluster.g4ldqzg.mongodb.net/?retryWrites=true&w=majority`;
-const db = new crudDriver(uri, 'memoir');
+const db_driver = new crudDriver(uri, 'memoir');
 const clientDOMAIN = 'https://localhost:5173';
 var csrfProtection = csrf({ cookie: true });
 server.use(cors({
@@ -69,6 +69,7 @@ server.post('/login', async (req, res) => {
     var password = req.body.password;
     printFormatted('yellow', 'username:', username, '\npassword:', password);
     try {
+        db_driver.openConnection();
         var valid = await authenticateCredentials(username, password);
         //if valid return session cookie
         if (valid) {
@@ -79,7 +80,7 @@ server.post('/login', async (req, res) => {
             printFormatted('yellow', 'session cookie:', cookie.getCookieStr());
             res.setHeader('Set-Cookie', cookie.getCookieStr());
             //update user session id
-            db.updateUserByUsername(username, { sessionId: value });
+            db_driver.updateUserByUsername(username, { sessionId: value });
             res.send({ res: true, message: 'User credentials were valid' });
         }
         else {
@@ -89,6 +90,9 @@ server.post('/login', async (req, res) => {
     catch (error) {
         res.send({ res: false, message: 'Problem logging in:' + error });
         printFormatted('red', error);
+    }
+    finally {
+        db_driver.closeConnection();
     }
 });
 /**
@@ -103,9 +107,15 @@ function getSessionIdFromReq(req) {
     printFormattedv2(true, false, 'yellow', allCookiesStr);
     var cookieStr = findCookie(allCookiesStr, 'memoir-session', asArr);
     printFormatted('yellow', 'cookieStr:', cookieStr);
-    //obtain the session id
-    var [sessionId, cookieObj] = findCookieAttribute(cookieStr, 'memoir-session');
-    return sessionId;
+    try {
+        //obtain the session id
+        var [sessionId, cookieObj] = findCookieAttribute(cookieStr, 'memoir-session');
+        return sessionId;
+    }
+    catch (error) {
+        printFormattedv2(true, false, 'yellow', error);
+    }
+    return '';
 }
 //Note res true means that the action of
 //the server was succesfully carried out
@@ -118,9 +128,11 @@ server.post('/login-session-cookie', async (req, res) => {
     printFormatted('blue', 'response handler for "/login-session-cookie" called');
     var sessionId = getSessionIdFromReq(req);
     printFormattedv2(false, false, 'yellow', 'sessionId', sessionId);
+    //open db connection
+    db_driver.openConnection();
     if (sessionId != '') {
         //authorise user to access application
-        var user = await db.findUserBySessionId(sessionId);
+        var user = await db_driver.findUserBySessionId(sessionId);
         try {
             var valid = await authenticateCredentials(user?.username, user?.password);
             //if valid return new auth cookie
@@ -134,7 +146,7 @@ server.post('/login-session-cookie', async (req, res) => {
                 res.setHeader('Set-Cookie', cookie.getCookieStr());
                 //update session id
                 const data = { sessionId: value };
-                db.updateUserByUsername(user?.username, data);
+                db_driver.updateUserByUsername(user?.username, data);
                 //send response
                 res.send({ res: true, message: 'User credentials were valid. User session ID updated.' });
             }
@@ -146,11 +158,17 @@ server.post('/login-session-cookie', async (req, res) => {
             res.send({ res: false, message: 'Problem logging in:' + error });
             printFormatted('red', error);
         }
+        finally {
+            //close db connection
+            db_driver.closeConnection();
+        }
     }
 });
 server.get('/logout', async (req, res) => {
     printFormatted('blue', 'response handler "/logout" called');
     try {
+        //open connection
+        db_driver.openConnection();
         //set session cookie to null
         const name = 'memoir-session';
         const domain = 'localhost';
@@ -161,15 +179,19 @@ server.get('/logout', async (req, res) => {
         //update session id
         const data = { sessionId: null };
         const currentSessionId = getSessionIdFromReq(req);
-        db.updateUserBySessionId(currentSessionId, data);
+        db_driver.updateUserBySessionId(currentSessionId, data);
         //and return to client wiht res true
         res.send({ res: true });
     }
     catch (error) {
         printFormattedv2(true, true, 'red', 'Problem logging out:', error);
     }
+    finally {
+        db_driver.closeConnection();
+    }
 });
 server.post('/sign-up', async (req, res) => {
+    db_driver.openConnection();
     printFormatted('blue', 'response handler "/sign-up" called');
     const name = req.body.name;
     const email = req.body.email;
@@ -185,25 +207,29 @@ server.post('/sign-up', async (req, res) => {
             message: 'Passwords do not match.'
         });
     }
-    const userExists = await authenticateCredentials(username, password1);
-    if (userExists) {
-        res.send({
-            res: false,
-            message: 'User already exists'
-        });
-    }
-    else {
-        try {
+    try {
+        const userExists = await authenticateCredentials(username, password1);
+        if (userExists) {
+            res.send({
+                res: false,
+                message: 'User already exists'
+            });
+            throw new Error('User Already Exists.');
+        }
+        else {
             //create user in db
-            await db.addUser(name, username, password1, email, sessionId);
+            await db_driver.addUser(name, username, password1, email, sessionId);
+            //send response to confirm successful
+            res.send({
+                res: true,
+                message: 'user added successfully'
+            });
         }
-        catch (error) {
-            printFormatted('red', 'Error adding user to database:', error);
-        }
-        //send response to confirm successful
-        res.send({
-            res: true,
-            message: 'user added successfully'
-        });
+    }
+    catch (error) {
+        printFormatted('red', 'Error adding user to database:', error);
+    }
+    finally {
+        db_driver.closeConnection();
     }
 });
