@@ -1,9 +1,15 @@
 @import url(../assets/base.css);
 
+
+html, body 
+{
+    margin: 0 !important;
+}
 @page
 {
-    size: A4 landscape;
-    margin: 0;
+    size: A4 landscape !important;
+    margin: 0 !important;
+    border:0!important;
 }
 
 /* A4 size landscape */
@@ -12,8 +18,9 @@
     html, body .scrapbook
     {
         width: 297mm;
-        height: 210mm;
-        margin:0;
+        height: 209.5mm;/*1 mm less than A4 */
+        margin:0 !important;
+        border:0 !important;
     }
 }
 
