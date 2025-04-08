@@ -10,6 +10,8 @@
  cd client
 
  npm install
+
+ npm start
  ```
 
  In another terminal window
@@ -17,6 +19,12 @@
  cd server
 
  npm install
+
+ npm start
  ```
 
 Then open the broswer at the address https://localhost:5173/
+
+Use the username 'username' and the password 'password' to login.
+
+You can then begin using the scrapbook to add images and text, and then have these printed out.
