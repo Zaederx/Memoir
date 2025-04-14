@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { makeCollapsibleSideways, addCssStyling, collapsibleCssSideways } from 'simplycollapsible-js'
-import { closePictureMenu, getImages, openPictureMenu, removeElementFromScrapbook, printScrapbook, addTextToScrapbook } from '@/helpers/uploadForm/upload-form'
+import { closePictureMenu, uploadImages, openPictureMenu, removeElementFromScrapbook, printScrapbook, addTextToScrapbook } from '@/helpers/uploadForm/upload-form'
 import { Printer } from 'simplyprint-js'
 import printCss from '../assets/print.css'
 
@@ -21,7 +21,7 @@ onMounted(() =>
 
     //enable submit button
     const btnSubmit = document.querySelector('#btn-submit-images') as HTMLDivElement
-    btnSubmit.onclick = () => getImages()
+    btnSubmit.onclick = () => uploadImages()
 
     //enable x (close) button
     const btnClose = document.querySelector('#btn-close') as HTMLDivElement
@@ -67,9 +67,9 @@ onMounted(() =>
                     </div>
                 </div>
             </div>
-            <div class="collapsible-content" id="collapse-2">
+            <!-- <div class="collapsible-content" id="collapse-2">
                 
-            </div>
+            </div> -->
         </div>
         
     </div>
