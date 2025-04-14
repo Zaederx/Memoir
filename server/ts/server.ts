@@ -6,9 +6,10 @@ import csrf from 'csurf'
 import { config as dotEnvConfig } from 'dotenv'
 import { Cookie, createSessionCookie, findCookie, findCookieAttribute } from 'simplycookie-js'
 import { v4 as uuidv4 } from 'uuid';
-
 import crudDriver from './db/db.js'
-import { authenticateCredentials } from './helpers/login.js'
+import { User } from './helpers/user.js';
+import { UserList } from './helpers/userList.js';
+
 // import * as url from 'url';
 //@ts-ignore
 import path from 'path'
@@ -24,8 +25,11 @@ dotEnvConfig({ path: envFilePath })
 //@ts-ignore
 const PORT = process.env.PORT
 const dbPassword = process.env.DATABASE_PASSWORD
-const uri = `mongodb+srv://memoir-cluster:${dbPassword}@memoir-cluster.g4ldqzg.mongodb.net/?retryWrites=true&w=majority`;
-const db_driver = new crudDriver(uri,'memoir')
+// const uri = `mongodb+srv://memoir-cluster:${dbPassword}@memoir-cluster.g4ldqzg.mongodb.net/?retryWrites=true&w=majority`; //this cluster has been retired - now only paid plans exist on mongodb
+//need to find new database for the project
+// const db_driver = new crudDriver(uri,'memoir')
+
+
 const clientDOMAIN = 'https://localhost:5173'
 
 var csrfProtection = csrf({cookie:true})
@@ -49,7 +53,9 @@ server.listen(PORT, () => {
 
 
 
-
+/**
+ * The end point for retrieving csrf tokens
+ */
 server.get('/csrf-token', (req:any, res:any) => {
    //set access control origin
    const name = 'Access-Control-Allow-Origin'//
@@ -85,8 +91,9 @@ server.post('/login', async (req: any, res: any) => {
    
    try 
    {
-      db_driver.openConnection()
-      var valid =  await authenticateCredentials(username, password)
+      // db_driver.openConnection()
+      // var valid =  await db_driver.authenticateCredentials(username, password)
+      var valid = authenticateUserCredentials(username, password)
       //if valid return session cookie
       if (valid) 
       {
@@ -97,7 +104,8 @@ server.post('/login', async (req: any, res: any) => {
          printFormatted('yellow', 'session cookie:',cookie.getCookieStr())
          res.setHeader('Set-Cookie',cookie.getCookieStr())
          //update user session id
-         db_driver.updateUserByUsername(username, {sessionId:value})
+         // db_driver.updateUserByUsername(username, {sessionId:value})
+         users.updateUserByUsername(username, {sessionId:value})
          res.send({res:true, message:'User credentials were valid'})
       }
       else
@@ -111,7 +119,7 @@ server.post('/login', async (req: any, res: any) => {
    }
    finally
    {
-      db_driver.closeConnection()
+      // db_driver.closeConnection()
    }
    
 })
@@ -126,14 +134,19 @@ function getSessionIdFromReq(req:any)
    var allCookiesStr = req.headers.cookie
    var asArr = false
    //find the cookie out all all cookies
-   printFormattedv2(true, false, 'yellow', allCookiesStr)
+   
+   const NODE = false
+   const TRACE = false
+   printFormattedv2(NODE, TRACE, 'yellow', 'allCookiesStr:', allCookiesStr)
+
    var cookieStr = findCookie(allCookiesStr, 'memoir-session', asArr) as string
    printFormatted('yellow', 'cookieStr:',cookieStr)
 
+   if (cookieStr == '' || cookieStr == undefined) { return ''}
    try
    {
       //obtain the session id
-      var [sessionId, cookieObj] = findCookieAttribute(cookieStr, 'memoir-session');
+      var [sessionId, cookieObj] = findCookieAttribute(cookieStr, 'memoir-session');//returns 
       return sessionId;
    }
    catch(error)
@@ -145,42 +158,59 @@ function getSessionIdFromReq(req:any)
 
 //Note res true means that the action of
 //the server was succesfully carried out
-/*
- * - login
- * - logout
- * - signup
+
+
+
+
+var user1 = new User("name", "username", "email@email.com", "password", "sessionId")
+var users:UserList = new UserList([user1])
+
+/**
+ * For logging in via the session cookie
  */
 server.post('/login-session-cookie', async (req: any, res: any) => {
    printFormatted('blue', 'response handler for "/login-session-cookie" called')
 
-   var sessionId = getSessionIdFromReq(req)
-   printFormattedv2(false,false,'yellow', 'sessionId',sessionId)
+   var sessionId = getSessionIdFromReq(req)//returns an empty string if cookie data is undefined
+   const NODE = true
+   const TRACE = false
+   printFormattedv2(NODE, TRACE, 'yellow', 'sessionId:', sessionId)
 
    //open db connection
-   db_driver.openConnection()
+   // db_driver.openConnection()
    if (sessionId != '') 
    {
       //authorise user to access application
-      var user = await db_driver.findUserBySessionId(sessionId)
+      // var user = await db_driver.findUserBySessionId(sessionId)
+      
+      
+      //mock finding a user
+      var validUser = false//TODO
+      var user = users.findUserBySessionId(sessionId)
+      user != null ? validUser = true : validUser = false
+      printFormattedv2(NODE, TRACE, 'yellow', 'user:', user)
+      printFormattedv2(NODE, TRACE, 'yellow', 'validUser:', validUser)
       try 
       {
-         var valid =  await authenticateCredentials(user?.username, user?.password)
+         // var valid =  await db_driver.authenticateCredentials(user?.username, user?.password)
          //if valid return new auth cookie
-         if (valid) 
+         if (validUser) 
          {
             //set new session cookie
             const name = 'memoir-session'
             const value = uuidv4()//sessionId
             const domain = 'localhost'
             var cookie:Cookie = createSessionCookie(name, value, domain)
-            printFormatted('yellow', 'session cookie:',cookie.getCookieStr())
+            printFormatted('yellow', 'session cookie:', cookie.getCookieStr())
             res.setHeader('Set-Cookie',cookie.getCookieStr())
 
-            //update session id
-            const data = { sessionId: value }
-            db_driver.updateUserByUsername(user?.username, data)
+            // //update session id
+            // const data = { sessionId: value }
+            // db_driver.updateUserByUsername(user?.username, data)
 
             //send response
+            const BrowserConsole = !NODE//don't print to node, but to the browser console
+            printFormattedv2(BrowserConsole, TRACE, 'yellow', 'user:', user)
             res.send({res:true, message:'User credentials were valid. User session ID updated.'})
          }
          else
@@ -189,36 +219,67 @@ server.post('/login-session-cookie', async (req: any, res: any) => {
          }
       } catch (error) 
       {
-         res.send({res:false, message:'Problem logging in:'+error})
          printFormatted('red', error)
+         res.send({res:false, message:'Problem logging in:'+error})
       }
       finally
       {
          //close db connection
-         db_driver.closeConnection()
+         // db_driver.closeConnection()
       }
    }
    
 })
 
 
+server.post('/save-img', async(req:any,res:any) => {
+   //get binary image data from body
+   var binaryString = req.body
+
+   //save in the database
+   try 
+   {
+      // db_driver.openConnection()
+      //get user session id from header cookies
+      var sessionId = getSessionIdFromReq(req)
+
+      //get user from database
+      // var user = db_driver.findUserBySessionId(sessionId)
+      var user = users.findUserBySessionId(sessionId)
+
+
+
+      //IMPORTANT - supposed to fetch images and then add new image to list of images
+      //update images
+      res.send({res:true, message: 'Successfully saved imaged.'})
+   }
+   catch (error)
+   {
+      res.send({res:false, message: 'Problem saving image to database:'+error})
+   }
+})
+
 server.get('/logout', async (req:any, res:any) => {
    printFormatted('blue', 'response handler "/logout" called')
    try 
    {
-      //open connection
-      db_driver.openConnection()
+      // //open connection
+      // db_driver.openConnection()
+
       //set session cookie to null
       const name = 'memoir-session'
       const domain = 'localhost'
       var cookie:Cookie = createSessionCookie(name, null, domain)
-      printFormatted('yellow', 'session cookie:',cookie.getCookieStr())
+      printFormatted('yellow', 'session cookie:', cookie.getCookieStr())
+
       //set in header
-      res.setHeader('Set-Cookie',cookie.getCookieStr())
-      //update session id
+      res.setHeader('Set-Cookie', cookie.getCookieStr())
+
+      //update session id - set session to null
       const data = { sessionId: null }
       const currentSessionId = getSessionIdFromReq(req)
-      db_driver.updateUserBySessionId(currentSessionId, data)
+      // //mongodb update session id to null
+      // db_driver.updateUserBySessionId(currentSessionId, data)
       //and return to client wiht res true
       res.send({res:true})
    }
@@ -228,12 +289,12 @@ server.get('/logout', async (req:any, res:any) => {
    }
    finally
    {
-      db_driver.closeConnection()
+      // db_driver.closeConnection()
    }
 })
 
 server.post('/sign-up', async (req:any, res:any) => {
-   db_driver.openConnection()
+   // db_driver.openConnection()
    printFormatted('blue', 'response handler "/sign-up" called')
    const name = req.body.name
    const email = req.body.email
@@ -263,7 +324,9 @@ server.post('/sign-up', async (req:any, res:any) => {
    }
    try
    {
-   const userExists = await authenticateCredentials(username,password1)
+   // const userExists = await db_driver.authenticateCredentials(username,password1)
+
+   var userExists = authenticateUserCredentials(username, password1)
       if (userExists) 
       {
          res.send({
@@ -276,9 +339,9 @@ server.post('/sign-up', async (req:any, res:any) => {
       else
       {
          
-         //create user in db
-         await db_driver.addUser(name,username,password1,email,sessionId)
-         
+         // //create user in db
+         // await db_driver.addUser(name,username,password1,email,sessionId)
+         users.addUser(new User(name, username, password1, email, sessionId))
 
          //send response to confirm successful
          res.send({
@@ -293,7 +356,13 @@ server.post('/sign-up', async (req:any, res:any) => {
    }
    finally
    {
-      db_driver.closeConnection()
+      // db_driver.closeConnection()
    }
 
 })
+function authenticateUserCredentials(username: string, password: string): boolean {
+   // Mock implementation for user authentication
+
+   return users.users.some(user => user.username === username && user.password === password);
+}
+
