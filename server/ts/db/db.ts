@@ -3,8 +3,8 @@ import { Db, MongoClient } from 'mongodb';
 import bcrypt from 'bcryptjs'
 import { printFormatted } from 'printformatted-js'
 /**
- * Class to perform Mongodb User CRUD opertations
- * Assumes the collection is called users.
+ * Class to perform Mongodb operations.
+ * Performs User CRUD operations and User authentication.
  */
 class DbUserCrudDriver {
   
@@ -12,7 +12,7 @@ class DbUserCrudDriver {
   dbClusterName:string
   database:Db
 
-  constructor(uri:string,dbClusterName:string)
+  constructor(uri:string, dbClusterName:string)
   {
     //connect to mongo db
     this.client = new MongoClient(uri);
@@ -20,8 +20,6 @@ class DbUserCrudDriver {
     //fetch database
     this.database = this.client.db(this.dbClusterName)
   }
-
-
 
   //CREATE
 
@@ -94,8 +92,9 @@ class DbUserCrudDriver {
   //READ
   /**
    * Finds a user by their username.
-   * Functions returns a user.
+   * Function returns a user.
    * @param username username of user to be found
+   * @return user:WithId<Document>
    */
   async findUserByUsername(username:string) 
   {
@@ -245,6 +244,9 @@ class DbUserCrudDriver {
     return result
   }
 
+  /**
+   * Opens the client connection
+   */
   async openConnection() 
   {
     this.client.connect()
@@ -252,11 +254,51 @@ class DbUserCrudDriver {
     this.database = this.client.db(this.dbClusterName)
   }
   
+  /**
+   * Closes the client connection
+   */
   async closeConnection()
   {
     this.client.close()
   }
 
+  //LOGIN
+  /**
+   * Checks whether the username and password are authentic.
+   * Returns true if they are authentic / found in the database in that combination.
+   * @param username username
+   * @param password password
+   * @return boolean
+   */
+  async authenticateCredentials(username:string,password:string):Promise<boolean>
+  {
+    try
+    {
+        //open connection to db
+        this.openConnection()
+        //find user
+        var user =  await this.findUserByUsername(username)
+        //close connection
+        this.closeConnection()
+        if (!user) throw new Error('No user found')
+        printFormatted('yellow', 'user:',user)
+        //if password match...
+        if (await bcrypt.compare(password, user?.password))
+        {
+          //login
+          return true
+        }
+        else
+        {
+          return false
+        }
+    }
+    catch(e)
+    {
+        console.log(e)
+    }
+    return false
+  }
 }
 
 
