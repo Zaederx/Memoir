@@ -1,4 +1,4 @@
-import { useCurrentElementStore } from "@/stores/currentElement.js"
+import { useCurrentElementStore } from "../../stores/currentElement.js"
 import { makeScrapbookElementsMovable } from "../scrapbook/scrapbook.js"
 import { Printer } from "simplyprint-js"
 import printCss from '../../assets/print.css'
@@ -36,7 +36,7 @@ export function closePictureMenu()
  * Retrieves/ gets images from input
  * and adds them to scrapbook.
  */
-export function getImages()
+export function uploadImages()
 {
     const input = document.querySelector('#file-input') as HTMLInputElement
 
@@ -44,11 +44,47 @@ export function getImages()
     {
         for (let index = 0; index < input.files.length; index++) 
         {
-            var file = input.files[index]
-            addFileToScrapbook(file)
+            //for each file ...
+            var img = input.files[index]
+            //save file to database/post to server
+            postToServer(img)
+            //add file to scrapbook
+            addFileToScrapbook(img)
         }
     }
     
+}
+
+/**
+ * Post the img file as binary to the server
+ * @param img img file to be posted to server
+ */
+function postToServer(img:File)
+{
+    
+    var reader = new FileReader();
+    reader.onloadend = () => {
+        //img as binary string
+        var binaryString = reader.result
+        //send to server
+        var csrfMetaTag = document.querySelector('#csrf-token') as HTMLMetaElement
+        const csrfToken = csrfMetaTag.content
+        const url = '/api/save-img'
+        fetch(url,{
+            method: 'POST',
+            mode: "cors", // no-cors, *cors, same-origin
+            cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: "include", // include, *same-origin, omit - https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch#sending_a_request_with_credentials_included
+            headers: {
+            "CSRF-TOKEN":csrfToken,
+            "Content-Type":"image"// see - https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types#types
+            },
+            redirect: "follow", //manual, *follow, error
+            referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            body: binaryString, // body data type must match "Content-Type" header
+        })
+    }
+    reader.readAsBinaryString(img)
 }
 
 /**
