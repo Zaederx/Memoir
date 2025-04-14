@@ -1,9 +1,15 @@
 import $ from 'jquery'
-import { messageToHTML } from '@/helpers/message-to-html.js';
+import { messageToHTML } from '../../helpers/message-to-html.js';
 import type { Router } from 'vue-router'
 import type { Store } from 'pinia'
 import { findCookie, findCookieAttribute } from 'simplycookie-js';
 import { printFormattedv2 } from 'printformatted-js';
+import { Response } from '../response.js'
+
+/**
+ * NOTES:
+ * Thre reason I'm using Pinia stores, is because there is 
+ */
 
 /**
  * Attempts to log the user in via email and password.
@@ -41,12 +47,16 @@ export async function loginViaEmailPassword(url:string='/api/login', router:Rout
         body: JSON.stringify(data),
     })
 
-    //set authentication value in the sessionStorage
-    sessionStorage.setItem('auth', JSON.stringify({isAuthenticated:response.ok}))
-    authStore.checkAuth()//authenticate or unauthenticate based on response
+    const authenticated = true
+    var responseJSON = await response.json()
+    var responseObj:Response = JSON.parse(responseJSON)
+    //set authentication value in the sessionStorage [storage in the browser - https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage]
+    sessionStorage.setItem('auth', JSON.stringify(responseObj.res))
+
     //send user back to home page on successful authentication
-    if (response.ok) 
+    if (response.ok && responseObj.res == authenticated) 
     {
+        authStore.authenticate()//set authenticationg to true in pinia store
         router.push('/user-home')
     }
     else 
@@ -54,7 +64,6 @@ export async function loginViaEmailPassword(url:string='/api/login', router:Rout
         const message = 'Login was unsuccessful'
         const html = messageToHTML(message)
         $('#errors').html(html)
-        authStore.checkAuth()
         console.log('Log in unsuccessful')
     }
 }
@@ -74,6 +83,7 @@ export async function loginViaSessionCookie(url:string='/api/login-session-cooki
     printFormattedv2(false,true,'yellow','loginViaSessionCookie called')
     var token = {csrfToken:''}
     
+    //gets the csrf token from the html
     token.csrfToken = $("meta[name='csrf-token']").attr("content") as string;
     if(token.csrfToken == null || token.csrfToken == undefined) {
 
@@ -82,6 +92,8 @@ export async function loginViaSessionCookie(url:string='/api/login-session-cooki
     var data = {}
     // var cookie = getAppCookie(cookieName,cookieValue)
 
+    //send a post message to trigger the 'login-session-cookie' api handler
+    //effectively sends a message to start trying to log you in via your session cookie (if you have one)
     const response = await fetch(url,{
         method: 'POST',
         mode:'cors',
@@ -96,11 +108,19 @@ export async function loginViaSessionCookie(url:string='/api/login-session-cooki
     })
 
     const authenticated = true
-    //set authentication value in the sessionStorage
-    var responseObj = {isAuthenticated:response.ok}
-    sessionStorage.setItem('auth', JSON.stringify(responseObj))
+    //set authentication value in the vue-pinia sessionStorage
+    console.log('response body:'+response.json())
+    
+    //get response object out of json
+    var responseJSON = await response.json()
+    var responseObj = JSON.parse(responseJSON)
+    // var responseObj = {isAuthenticated:response}
+    //set authentication value in the sessionStorage [storage in the browser - https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage]
+    sessionStorage.setItem('auth', JSON.stringify(responseObj.res))
 
-    if(response.ok == authenticated)
+    //just because the response was successful ('response.ok == true') doesn't mean the user is authenticated
+    //need to check the json 'res' variable and 'message'
+    if(response.ok && responseObj.res == authenticated)
     {
         alert('Login was successful')
         //rediect user to user home page
@@ -108,7 +128,7 @@ export async function loginViaSessionCookie(url:string='/api/login-session-cooki
         {
             router.push('/scrapbook')
         }
-        authStore.set
+        authStore.authenticate()//set user to authenticated
     }
     else {
         const message = 'Login was unsuccessful'
@@ -121,12 +141,14 @@ export async function loginViaSessionCookie(url:string='/api/login-session-cooki
 /**
  * check whether there is already a session cookie
  */
-export function checkForSessionCookie()
-{
-    const asArray = false
-    printFormattedv2(false, false, 'yellow', 'all js accessible cookies', document.cookie)
-    var cookieStr:string = findCookie(document.cookie, 'memoir-session', asArray) as string
-    // var [sessionId, cookie] = findCookieAttribute(cookieStr, 'memoir-session')
-    if (cookieStr) {return true}
-    else {return false}
-}
+// export function checkForSessionCookie()
+// {
+//     const asArray = false
+//     const NODE = false
+//     const TRACE = false
+//     printFormattedv2(NODE, TRACE, 'yellow', 'all js accessible cookies', document.cookie)
+//     var cookieStr:string = findCookie(document.cookie, 'memoir-session', asArray) as string
+//     // var [sessionId, cookie] = findCookieAttribute(cookieStr, 'memoir-session')
+//     if (cookieStr) {return true}
+//     else {return false}
+// }
