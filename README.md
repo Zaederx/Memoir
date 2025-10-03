@@ -1,5 +1,5 @@
 # Memoir
- A scrapbooking application that I'm working on.
+ A scrapbooking application that I'm working on. Works on Firefox and Chrome (on Safari in consistent results at best).
 
  The idea is to create something that can allow people to make scrapbooks online and then pdf some of them if they wish.
  
@@ -25,6 +25,5 @@
 
 Then open the broswer at the address https://localhost:5173/
 
-Use the username 'username' and the password 'password' to login.
+To login use the username 'username' and password 'password'.
 
-You can then begin using the scrapbook to add images and text, and then have these printed out.
