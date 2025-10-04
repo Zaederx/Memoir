@@ -27,3 +27,6 @@ Then open the broswer at the address https://localhost:5173/
 
 To login use the username 'username' and password 'password'.
 
+
+# Note - Secure Files Commited
+I know that some secure files are commited, but that's on purpose as it's a demo project (not a "real" project). This is so anyone can just run the program straight away without needing to fiddle with database passwords, etc.
