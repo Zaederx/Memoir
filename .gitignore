@@ -9,7 +9,7 @@
 #js files
 */js/
 
-*/node_modules/
+node_modules/
 
 # Compiled class file
 *.class
