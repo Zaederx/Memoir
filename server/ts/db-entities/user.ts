@@ -2,7 +2,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
 /**
- * An Entity for Object Rleation Mapping.
+ * An Entity for Object Relation Mapping.
  * (Helpls to map the data of TypeScript/Javascript Objects 
  * to a database model.)
  */
@@ -17,7 +17,7 @@ export class User {
     @Column()
     email:string;
     @Column()
-    password:string;
+    passwordHash:string;
     @Column()
     sessionId:string;
  
