@@ -79,3 +79,10 @@ for (var char of str)
     console.log(char)
 }
 ```
+
+## JavaScript lists and the user of `some` function
+There's a function called some for JavaScript lists which can be used in the following way.
+```
+return users.users.some(user => user.username === username && user.password === password);
+```
+See also [W3Schools -  Array some](https://www.w3schools.com/jsref/jsref_some.asp) (Note list in JavaScript are also sometimes called array - though they are not really).
